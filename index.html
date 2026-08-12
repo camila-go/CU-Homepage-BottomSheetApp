@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Capella — Bottom Sheet</title>
+
+    <!-- iOS Safari tints its bottom toolbar to match this. Kept from the
+         homepage because the bottom-sheet design sits against the same red. -->
+    <meta name="theme-color" content="#c10016" />
+
+    <!-- ⚠️ Typekit carries the Acumin display faces (--font-display,
+         --font-acumin-pro). Without this the nav and headings silently fall
+         back to the system sans and every measurement shifts. -->
+    <link rel="stylesheet" href="https://use.typekit.net/rrn6owv.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- ⚠️ `1,700` is required, not optional: bold italic on capella.edu is
+         Inter Bold Italic. Without that tuple the only italic face loaded is
+         400, so `font-weight: 700` silently falls back to it and renders
+         regular-weight no matter what the CSS says. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- ⚠️ Load order is the original stylesheet's order. base defines the
+         reset and the shared `.btn` / `.page-container` rules both of the
+         others build on. -->
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/nav.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <script src="https://kit.fontawesome.com/f1bee60eab.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="utility-bar">
+      <div class="utility-bar__inner page-container">
+        <a href="tel:1-866-679-9682" class="utility-bar__link">1-866-679-9682</a>
+        <a href="#" class="utility-bar__link">Log in</a>
+        <a href="#" class="utility-bar__cta">
+          <span class="utility-bar__cta-full">Request information</span>
+          <span class="utility-bar__cta-short">Request info</span>
+        </a>
+      </div>
+    </div>
+
+    <header class="main-nav">
+      <div class="main-nav__wrapper page-container">
+        <nav class="main-nav__bar" aria-label="Main navigation">
+          <a href="#" class="main-nav__logo" aria-label="Capella University home">
+            <img
+              src="/assets/nav-shield.svg"
+              alt=""
+              class="main-nav__logo-shield logo-img"
+              width="31"
+              height="35"
+              decoding="async"
+            />
+            <img
+              src="/assets/nav-wordmark.svg"
+              alt="Capella University"
+              class="main-nav__logo-wordmark logo-img"
+              width="127"
+              height="33"
+              decoding="async"
+            />
+          </a>
+          <!-- Nav information architecture mirrors capella.edu. "Degrees &
+               Programs" is a two-column megamenu (degree level → area of
+               study); the other three are single-column grouped lists. Links
+               are `#` — this is a prototype, so only the menu behaviour is
+               real. Triggers stay <a> with aria-haspopup (as capella.edu does)
+               so the existing .main-nav__links a styling still applies. -->
+          <ul class="main-nav__links">
+            <li class="main-nav__item">
+              <a href="#" aria-haspopup="true" aria-expanded="false" aria-controls="menu-degrees">Degrees &amp; Programs</a>
+              <div class="megamenu megamenu--split" id="menu-degrees" hidden>
+                  <div class="megamenu__col megamenu__col--levels">
+                    <p class="megamenu__title">Degrees &amp; Programs</p>
+                    <p class="megamenu__eyebrow">By Degree Level</p>
+                    <ul class="megamenu__level-list" role="tablist" aria-label="Degree level">
+                      <li>
+                        <button type="button" role="tab" aria-selected="true" aria-controls="area-bachelors" class="megamenu__level is-active">
+                          Bachelor&apos;s Degrees<span class="megamenu__chev" aria-hidden="true">›</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" role="tab" aria-selected="false" aria-controls="area-masters" class="megamenu__level">
+                          Master&apos;s Degrees<span class="megamenu__chev" aria-hidden="true">›</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" role="tab" aria-selected="false" aria-controls="area-doctoral" class="megamenu__level">
+                          Doctoral Degrees<span class="megamenu__chev" aria-hidden="true">›</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" role="tab" aria-selected="false" aria-controls="area-certificates" class="megamenu__level">
+                          Certificates<span class="megamenu__chev" aria-hidden="true">›</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" role="tab" aria-selected="false" aria-controls="area-courses" class="megamenu__level">
+                          Individual Courses<span class="megamenu__chev" aria-hidden="true">›</span>
+                        </button>
+                      </li>
+                    </ul>
+                    <a href="#" class="megamenu__cta">Find your program</a>
+                  </div>
+                  <div class="megamenu__col megamenu__col--areas">
+                    <div class="megamenu__panel" id="area-bachelors" role="tabpanel">
+                      <h3 class="megamenu__panel-title">Bachelor&apos;s Degrees</h3>
+                      <ul class="megamenu__area-list">
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Health Sciences</a></li>
+                        <li><a href="#">Information Technology</a></li>
+                        <li><a href="#">Nursing</a></li>
+                        <li><a href="#">Psychology</a></li>
+                        <li><a href="#">Social Work</a></li>
+                      </ul>
+                    </div>
+                    <div class="megamenu__panel" id="area-masters" role="tabpanel" hidden>
+                      <h3 class="megamenu__panel-title">Master&apos;s Degrees</h3>
+                      <ul class="megamenu__area-list">
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Counseling &amp; Therapy</a></li>
+                        <li><a href="#">Education</a></li>
+                        <li><a href="#">Health Sciences</a></li>
+                        <li><a href="#">Information Technology</a></li>
+                        <li><a href="#">Nursing</a></li>
+                        <li><a href="#">Psychology</a></li>
+                        <li><a href="#">Social Work</a></li>
+                      </ul>
+                    </div>
+                    <div class="megamenu__panel" id="area-doctoral" role="tabpanel" hidden>
+                      <h3 class="megamenu__panel-title">Doctoral Degrees</h3>
+                      <ul class="megamenu__area-list">
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Education</a></li>
+                        <li><a href="#">Health Sciences</a></li>
+                        <li><a href="#">Information Technology</a></li>
+                        <li><a href="#">Nursing</a></li>
+                        <li><a href="#">Psychology</a></li>
+                        <li><a href="#">Social Work</a></li>
+                      </ul>
+                    </div>
+                    <div class="megamenu__panel" id="area-certificates" role="tabpanel" hidden>
+                      <h3 class="megamenu__panel-title">Certificates</h3>
+                      <ul class="megamenu__area-list">
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Counseling &amp; Therapy</a></li>
+                        <li><a href="#">Health Sciences</a></li>
+                        <li><a href="#">Nursing</a></li>
+                        <li><a href="#">Psychology</a></li>
+                      </ul>
+                    </div>
+                    <div class="megamenu__panel" id="area-courses" role="tabpanel" hidden>
+                      <h3 class="megamenu__panel-title">Individual Courses</h3>
+                      <ul class="megamenu__area-list">
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Counseling, Therapy and Psychology</a></li>
+                        <li><a href="#">Education</a></li>
+                        <li><a href="#">General Education</a></li>
+                        <li><a href="#">Health Administration and Public Health</a></li>
+                        <li><a href="#">IT</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="megamenu__col megamenu__col--programs" id="degrees-programs-col" hidden></div>
+              </div>
+            </li>
+            <li class="main-nav__item">
+              <a href="#" aria-haspopup="true" aria-expanded="false" aria-controls="menu-experience">Capella Experience</a>
+              <div class="megamenu megamenu--list" id="menu-experience" hidden>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">About Capella</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">Accreditation</a></li>
+                      <li><a href="#">Competency-Based Education</a></li>
+                      <li><a href="#">The Doctoral Journey</a></li>
+                      <li><a href="#">Student Experience</a></li>
+                      <li><a href="#">WNBA x Capella</a></li>
+                      <li><a href="#">Community Engagement</a></li>
+                    </ul>
+                  </div>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Compare Learning Formats</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">FlexPath Learning Format</a></li>
+                      <li><a href="#">GuidedPath Learning Format</a></li>
+                      <li><a href="#">Path Finder Quiz</a></li>
+                      <li><a href="#">Trial Course</a></li>
+                    </ul>
+                  </div>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Support</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">Faculty</a></li>
+                      <li><a href="#">Career Development Center</a></li>
+                      <li><a href="#">Capella University Blog</a></li>
+                    </ul>
+                  </div>
+              </div>
+            </li>
+            <li class="main-nav__item">
+              <a href="#" aria-haspopup="true" aria-expanded="false" aria-controls="menu-financing">Financing</a>
+              <div class="megamenu megamenu--list" id="menu-financing" hidden>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Paying for Your Degree</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">Tuition &amp; Fees</a></li>
+                    </ul>
+                  </div>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Ways To Save</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">Scholarships and Progress Rewards</a></li>
+                      <li><a href="#">Capella Tuition Cap</a></li>
+                      <li><a href="#">Grants</a></li>
+                      <li><a href="#">No-cost gen eds via Sophia Learning</a></li>
+                      <li><a href="#">Credit for Prior Learning</a></li>
+                      <li><a href="#">Refer a friend</a></li>
+                      <li><a href="#">Employer assistance</a></li>
+                      <li><a href="#">Military Benefits</a></li>
+                    </ul>
+                  </div>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Financial Aid</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">Financial Aid Policies</a></li>
+                      <li><a href="#">Net Price Calculator</a></li>
+                      <li><a href="#">Private Student Loans</a></li>
+                    </ul>
+                  </div>
+              </div>
+            </li>
+            <li class="main-nav__item">
+              <a href="#" aria-haspopup="true" aria-expanded="false" aria-controls="menu-admissions">Admissions</a>
+              <div class="megamenu megamenu--list" id="menu-admissions" hidden>
+                  <div class="megamenu__group">
+                    <h3 class="megamenu__group-title"><a href="#">Admission Requirements</a></h3>
+                    <ul class="megamenu__area-list">
+                      <li><a href="#">International Students</a></li>
+                      <li><a href="#">Transferring Credits</a></li>
+                      <li><a href="#">Accelerated Master&apos;s Pathway (AMP)</a></li>
+                      <li><a href="#">Sophia Admissions Pathway</a></li>
+                    </ul>
+                  </div>
+                  <a href="#" class="megamenu__apply">Apply Now</a>
+              </div>
+            </li>
+          </ul>
+          <a href="#" class="btn btn--white btn--md main-nav__apply">Apply now</a>
+          <button
+            type="button"
+            class="main-nav__menu-btn"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobile-nav-panel"
+          >
+            <span class="main-nav__menu-icon" aria-hidden="true"></span>
+          </button>
+        </nav>
+        <div class="main-nav__mobile-panel" id="mobile-nav-panel" hidden>
+          <ul class="main-nav__mobile-links">
+            <li><a href="#">Degrees &amp; Programs</a></li>
+            <li><a href="#">Capella Experience</a></li>
+            <li><a href="#">Financing</a></li>
+            <li><a href="#">Admissions</a></li>
+          </ul>
+          <a href="#" class="btn btn--white btn--md main-nav__mobile-apply">Apply now</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Bottom-sheet work goes here. -->
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner page-container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <img
+              src="/assets/footer-logo.svg"
+              alt="Capella University"
+              class="footer__logo"
+              width="194"
+              height="41"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="footer__social">
+            <a href="#" aria-label="Facebook"><img src="/assets/social-facebook.svg" alt="" width="24" height="24" loading="lazy" decoding="async" /></a>
+            <a href="#" aria-label="X"><img src="/assets/social-x.png" alt="" width="20" height="21" loading="lazy" decoding="async" /></a>
+            <a href="#" aria-label="LinkedIn"><img src="/assets/social-linkedin.svg" alt="" width="24" height="24" loading="lazy" decoding="async" /></a>
+            <a href="#" aria-label="Instagram"><img src="/assets/social-instagram.svg" alt="" width="24" height="24" loading="lazy" decoding="async" /></a>
+            <a href="#" aria-label="YouTube"><img src="/assets/social-youtube.svg" alt="" width="24" height="24" loading="lazy" decoding="async" /></a>
+            <a href="#" aria-label="TikTok"><img src="/assets/social-tiktok.svg" alt="" width="24" height="24" loading="lazy" decoding="async" /></a>
+            </div>
+          </div>
+          <div class="footer__links">
+            <div class="footer__column">
+              <h3 class="footer__column-heading">Areas of study</h3>
+              <ul>
+                <li><a href="#">Business</a></li>
+                <li><a href="#">Counseling &amp; Therapy</a></li>
+                <li><a href="#">Education</a></li>
+                <li><a href="#">Health sciences</a></li>
+                <li><a href="#">Information technology</a></li>
+                <li><a href="#">Nursing</a></li>
+                <li><a href="#">Psychology</a></li>
+                <li><a href="#">Social work</a></li>
+              </ul>
+            </div>
+            <div class="footer__column">
+              <h3 class="footer__column-heading">About us</h3>
+              <ul>
+                <li><a href="#">Capella store</a></li>
+                <li><a href="#">Community Engagement</a></li>
+                <li><a href="#">Consumer information guide</a></li>
+                <li><a href="#">Contact us</a></li>
+                <li><a href="#">Capella blog</a></li>
+                <li><a href="#">Mission and leadership</a></li>
+                <li><a href="#">Tuition and fees</a></li>
+                <li><a href="#">Tuition and financial aid policies</a></li>
+                <li><a href="#">University catalog</a></li>
+                <li><a href="#">University fact sheet</a></li>
+                <li><a href="#">University policies</a></li>
+              </ul>
+            </div>
+            <div class="footer__column">
+              <h3 class="footer__column-heading">Information for</h3>
+              <ul>
+                <li><a href="#">Accessibility</a></li>
+                <li><a href="#">Alumni association</a></li>
+                <li><a href="#">Careers at Capella</a></li>
+                <li><a href="#">Commencement</a></li>
+                <li><a href="#">Digital diploma</a></li>
+                <li><a href="#">Degree verification</a></li>
+                <li><a href="#">Disability services</a></li>
+                <li><a href="#">Employers</a></li>
+                <li><a href="#">Military</a></li>
+                <li><a href="#">News and media</a></li>
+                <li><a href="#">Transcripts</a></li>
+                <li><a href="#">Undergrad honors pathway</a></li>
+                <li><a href="#">Experiential learning</a></li>
+              </ul>
+            </div>
+            <div class="footer__column">
+              <h3 class="footer__column-heading">Legal</h3>
+              <ul>
+                <li><a href="#">Cookie policy</a></li>
+                <li><a href="#">Cost of attendance disclosure</a></li>
+                <li><a href="#">Higher Education Emergency Relief Fund (HEERF) II &amp; III</a></li>
+                <li><a href="#">Legal and regulatory information</a></li>
+                <li><a href="#">Massachusetts Regulatory Disclosures</a></li>
+                <li><a href="#">Privacy policy</a></li>
+                <li><a href="#">Professional licensure disclosures</a></li>
+                <li><a href="#">Site map</a></li>
+                <li><a href="#">Terms of use</a></li>
+                <li><a href="#">Title IX</a></li>
+                <li><a href="#">Your Privacy Choices</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <div class="footer__copyright">
+            <p class="footer__ownership">
+              Capella University is owned by Strategic Education, Inc., which operates a suite of
+              educational institutions, programs and services.
+            </p>
+            <p class="footer__rights">© 2026 Capella University. All rights reserved.</p>
+          </div>
+          <hr class="footer__divider" />
+          <!-- Partner carousel. Matches the live site's behaviour: 6 logos per
+               view on desktop, 1 on mobile, manual arrows only (no autoplay).
+               The old flat strip PNG had the arrows *painted into the image*, so
+               they were decorative — these are real buttons. -->
+          <div class="footer__partners" role="group" aria-roledescription="carousel" aria-label="Strategic Education family of brands">
+            <button type="button" class="footer__partners-arrow footer__partners-arrow--prev" aria-label="Previous brands">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M12.5 4 7 10l5.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="footer__partners-viewport">
+              <ul class="footer__partners-track">
+                <!-- All ten SEI brands, in the same order as the live footer.
+                     These are the official brand exports, so the old
+                     `footer-partner-*.svg` files (two of which were mislabelled)
+                     are no longer used — see HANDOFF §3d. -->
+                <li class="footer__partners-item"><img src="/assets/partners/workforce-edge.svg" alt="Workforce Edge" width="400" height="50" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/sei.svg" alt="Strategic Education, Inc." width="400" height="121" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/strayer.svg" alt="Strayer University" width="400" height="88" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/devmountain.svg" alt="Devmountain" width="400" height="70" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/sophia.png" alt="Sophia Learning" width="478" height="176" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/jwmi.png" alt="Jack Welch Management Institute" width="776" height="176" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/think-education.png" alt="Think Education" width="125" height="40" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/torrens.svg" alt="Torrens University Australia" width="124" height="35" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/media-design-school.svg" alt="Media Design School" width="135" height="70" loading="lazy" decoding="async" /></li>
+                <li class="footer__partners-item"><img src="/assets/partners/degrees-at-work.png" alt="Degrees@Work" width="1042" height="176" loading="lazy" decoding="async" /></li>
+              </ul>
+            </div>
+            <button type="button" class="footer__partners-arrow footer__partners-arrow--next" aria-label="Next brands">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M7.5 4 13 10l-5.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+  </body>
+</html>

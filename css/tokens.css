@@ -1,0 +1,120 @@
+:root {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-uni-red: #c10016;
+  --color-uni-black: #212322;
+  --color-boulder-50: #f3f4f4;
+  --color-boulder-600: #696f74;
+  --color-boulder-800: #3a4146;
+  --color-boulder-700: #4f565b;
+  --color-boulder-900: #212427;
+  --color-stat-blue: #94b7bb;
+  --color-gray-500: #d9d9d9;
+  --color-neutral-100: #d4d4d4;
+  --color-neutral-200: #adadad;
+  --color-light-gray: #f6f7f7;
+  /* Program-finder chips, sampled from the UI Elements Figma (node 2001:335) */
+  --color-chip-rest: #4f4f4f;
+  --color-chip-hover-border: #8e8e8e;
+  /* Text on the stats program card's white hover state (node 2001:635) */
+  --color-program-hover-eyebrow: #767676;
+  --color-program-hover-name: #505050;
+
+  /* Figma display: Acumin Pro Extra Condensed (maps to Acumin VF styles in dev mode) */
+  --font-display: 'acumin-pro-extra-condensed', sans-serif;
+  --font-acumin-pro: 'acumin-pro', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --weight-display-black: 800;
+  --weight-display-semibold: 600;
+  --text-display-xl: 6.25rem; /* 100px */
+  --text-display: 3.75rem; /* 60px */
+  --text-display-stats: 4.6875rem; /* 75px */
+  --text-h2: 3rem; /* 48px */
+  --text-program-finder: 2.8125rem; /* 45px */
+  --text-h4: 1.75rem; /* 28px */
+  --text-h5: 1.5rem; /* 24px */
+  --text-h6: 1.25rem; /* 20px */
+  --text-body-lg: 1.25rem; /* 20px */
+  --text-body: 1rem; /* 16px */
+  --text-body-sm: 0.875rem; /* 14px */
+  --text-ui-sm: 0.75rem; /* 12px */
+
+  --max-content: 1440px;
+  --tiles-max-width: 1170px;
+
+  /* Hero heights from Figma. The hero fills the viewport minus the sticky
+     header + program-finder top, capped/floored at these design heights. */
+  --hero-height: 755px; /* desktop (>=1200px) cap (Figma hero height) */
+  --hero-height-tablet-max: 640px; /* tablet / small-desktop cap (769-1199px) */
+  --hero-height-mobile: 360px; /* mobile floor (<769px) */
+  --page-gutter: clamp(15px, 12.5vw, 240px);
+  --radius-pill: 32px;
+  --radius-card: 40px;
+  --radius-chip: 8px;
+  --radius-tile: 16px;
+  --radius-glass: 24px;
+
+  --carousel-gap: 24px;
+
+  /* Glass UI — matches Figma GLASS effect + Make prototype */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(255, 255, 255, 0.28);
+  --glass-blur: 16px;
+
+  /* Nav interaction states. The nav sits on near-black, so hover/press read as
+     progressively stronger white washes, and focus is a plain white ring.
+     The hover wash is sampled from the UI Elements Figma (node 2001:125): the
+     pill renders #373b39 over the #212322 bar, i.e. white at ~10%. */
+  --nav-pill-radius: 100px;
+  --nav-pill-hover: rgba(255, 255, 255, 0.1);
+  --nav-pill-active: rgba(255, 255, 255, 0.2);
+  /* Current/"activated" nav item — a solid fill, deliberately stronger than the
+     hover wash so it still reads as current while a sibling is hovered.
+     Sampled from the UI Elements Figma (node 21:20697). */
+  --nav-pill-current: #5e6361;
+  /* Figma pill is 48px tall (gl-size-4xl) — 12px of padding on a 24px line. */
+  --nav-pill-pad-y: 12px;
+  --nav-pill-pad-x: clamp(12px, 1.2vw, 24px);
+  --nav-focus-ring: 2px solid var(--color-white);
+  --nav-focus-offset: 2px;
+
+  /* Nav dropdown surfaces — UI Elements Figma (mobile 2003:19342, desktop
+     2006:19343). The menus are DARK. Surfaces step one shade lighter per
+     column, and the highlight for a row is the next surface along that ramp,
+     which is what visually ties a column to the one it opened. */
+  --menu-surface-1: #212322; /* uni-black-500 — panel, levels column */
+  --menu-surface-2: #383838; /* neutral-600 — areas column; highlight on surface-1 */
+  --menu-surface-3: #454545; /* neutral-500 — programs column; highlight on surface-2 */
+  --menu-row-mobile: #262626; /* neutral-700 — filled top-level mobile rows */
+  --menu-rule: #696969; /* neutral-400 — mobile row divider */
+  --menu-text: #ffffff; /* neutral-0 */
+  --menu-text-muted: #d4d4d4; /* neutral-100 — levels column title + eyebrow */
+  --menu-heading: #fafbfb; /* neutral-50 — areas/programs column headings */
+  --menu-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* CU/elevation 1 */
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.2s;
+  --duration-med: 0.45s;
+  --duration-slow: 0.7s;
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --page-gutter: 240px;
+  }
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --page-gutter: clamp(24px, 6vw, 80px);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-gutter: clamp(15px, 4vw, 24px);
+  }
+}
