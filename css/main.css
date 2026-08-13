@@ -42,10 +42,14 @@
   font-size: var(--text-body);
 }
 
+/* The 4px transparent border is real, not decoration: it is what makes the live
+   chip 132px wide rather than 123px, and it is where the focus ring lands. */
 .chip-red {
   padding: 6.5px 15px;
+  border: 4px solid transparent;
   border-radius: 7.5px;
   font-size: 1.125rem; /* 18px */
+  line-height: 1.5; /* 27px */
   min-height: 48px;
 }
 
@@ -149,6 +153,64 @@
   list-style: none;
 }
 
+/* The chosen degree goes to #3a0007 — a third, much darker red used only for
+   this selected state (rest #c10016, hover #74000d). */
+.chip-red.is-selected,
+.chip-red.is-selected:hover {
+  background: #3a0007;
+  color: var(--color-white);
+}
+
+/* Program finder, revealed a step at a time by js/hero.js.
+   ⚠️ The two selects sit SIDE BY SIDE, not stacked — live is
+   `display: flex; gap: 30px; align-items: flex-end` with each label above its
+   own select (measured: selects at x=165 and x=407, i.e. 212px wide + 30px gap,
+   both with top=647 and labels at top=606). */
+.hero__finder {
+  display: flex;
+  align-items: flex-end;
+  gap: 30px;
+  margin-top: 24px;
+}
+
+/* Live label→select offset is 41px (label top 606, select top 647): an 18px
+   label at line-height 1.5 (27px) plus a 14px gap. */
+.hero__field {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+}
+
+/* `display: flex` above would otherwise defeat the `hidden` attribute. */
+.hero__field[hidden] {
+  display: none;
+}
+
+.hero__label {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.5;
+  color: var(--color-uni-black);
+}
+
+.hero__select {
+  width: 212px;
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid var(--color-uni-black);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-uni-black);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 700;
+}
+
+.hero__select:focus-visible {
+  outline: 2px solid var(--color-uni-black);
+  outline-offset: 2px;
+}
+
 /* Mobile-only: the desktop artwork is the background image above. */
 .hero__image {
   display: none;
@@ -216,7 +278,10 @@
   border-radius: 0 0 10px 10px;
   background: var(--color-white);
   color: var(--color-uni-red);
-  font-size: 0.9375rem;
+  /* Live: 16px / 24px with -0.06px tracking. */
+  font-size: var(--text-body);
+  line-height: 1.5;
+  letter-spacing: -0.06px;
   font-weight: 700;
   text-align: center;
 }
@@ -265,15 +330,24 @@
   flex-direction: column;
 }
 
+/* ⚠️ The stat numbers are Inter BOLD, not the condensed display face. Live:
+   `Inter-Bold, 60px, line-height 72px` (i.e. 1.2), not uppercase. I had them on
+   the `.display` class at 64px with `wdth 50`, which made them far narrower than
+   the live figures. Caught by the computed-style sweep. */
 .stat__value {
-  font-size: 4rem; /* 64px */
+  font-family: var(--font-body);
+  font-size: 3.75rem; /* 60px */
+  font-weight: 700;
+  line-height: 1.2; /* 72px */
   color: var(--color-white);
 }
 
+/* Live: Inter-Bold 22px / 26.4px — not 16px. */
 .stat__label {
   margin: 0;
-  font-size: var(--text-body);
+  font-size: 1.375rem; /* 22px */
   font-weight: 700;
+  line-height: 1.2; /* 26.4px */
 }
 
 .stats__source {
@@ -315,7 +389,11 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
-  padding: 14px 20px;
+  /* Live padding is 18.5px 30px, plus a 4px transparent border all round —
+     together those make the card 90px tall rather than 73px. The border is the
+     site's standard button hit/focus allowance (the hero chips have it too). */
+  padding: 18.5px 30px;
+  border: 4px solid transparent;
   background: var(--color-card-blue);
   color: var(--color-uni-black);
   box-shadow: var(--shadow-btn);
@@ -390,7 +468,7 @@
 }
 
 .move__title {
-  margin: 0 0 28px;
+  margin: 0 0 30px;
   font-size: var(--text-h2);
   text-align: center;
   color: var(--color-white);
@@ -537,38 +615,31 @@
   display: none;
 }
 
-/* 7 ── Responsive ------------------------------------------------------ */
-@media (max-width: 1024px) {
-  .hero {
-    min-height: 0;
-  }
-
-  .hero__content {
-    max-width: none;
-    padding-block: 40px;
-  }
-
-  .stats__grid,
-  .formats__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .accred__logos {
-    gap: 28px;
-  }
-
-  .accred__logos img {
-    width: 170px;
-  }
-}
-
-@media (max-width: 768px) {
-  /* Mobile hero stacks: the 640x432 photo first, full-bleed, then the copy
-     underneath. The desktop background artwork is dropped so it can't show
-     through behind the text. */
+/* 7 ── Responsive ------------------------------------------------------
+ *
+ * ⚠️ Breakpoints are capella.edu's (Bootstrap 4), not round numbers. Measured
+ * on the live site across 1440 / 992 / 768 / 576 / 375:
+ *
+ *   ≤991  nav collapses to a 41px bar + hamburger; hero swaps the full-bleed
+ *         background artwork for the stacked <img>; h1 72 → 40px;
+ *         stat value 60 → 24px
+ *   ≤767  utility bar 61 → 72px; stats/programmes stack; move tiles → 1 col;
+ *         stat label 22 → 16px
+ *   ≤575  format cards → 1 col; the fixed red action bar appears (50px)
+ *
+ * I originally used 1024/768, which collapsed the two-column bands a full
+ * breakpoint too early — at 768 the live site still shows format cards, stats
+ * and move tiles two-up. The 991 figure is confirmed by the live page's own
+ * inline `@media screen and (max-width: 991px)` hero override.
+ */
+@media (max-width: 991px) {
+  /* Hero stacks: the 640x432 photo first, full-bleed, then the copy underneath.
+     The desktop background artwork is dropped so it can't show through behind
+     the text — the live page does exactly this at the same width. */
   .hero {
     display: flex;
     flex-direction: column;
+    min-height: 0;
     background-image: none;
   }
 
@@ -582,17 +653,28 @@
     object-fit: cover;
   }
 
+  .hero__content {
+    max-width: none;
+    padding-block: 40px;
+  }
+
   .hero__title {
-    font-size: var(--text-h1-live-mobile);
+    font-size: var(--text-h1-live-mobile); /* 40px */
   }
 
   .hero__body {
     font-size: var(--text-body);
   }
 
-  .hero__chips {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Live drops both hard here — value 60 → 24px, label 22 → 16px (measured at
+     768, where the label is already 16px). */
+  .stat__value {
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.2;
+  }
+
+  .stat__label {
+    font-size: var(--text-body); /* 16px */
   }
 
   .formats__title,
@@ -601,12 +683,45 @@
     font-size: 2rem; /* 32px */
   }
 
-  .stat__value {
-    font-size: 3rem; /* 48px */
+  .accred__logos {
+    gap: 28px;
+  }
+
+  .accred__logos img {
+    width: 170px;
+  }
+}
+
+@media (max-width: 767px) {
+  .stats__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .move__tiles {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The two hero selects can't sit side by side in 375px. */
+  .hero__finder {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .hero__select {
+    width: 100%;
+    max-width: 345px;
+  }
+}
+
+@media (max-width: 575px) {
+  .formats__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero__chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .accred__logos img {
@@ -615,9 +730,10 @@
 
   /* The fixed bar covers the bottom of the page, so reserve its height. */
   body {
-    padding-bottom: 56px;
+    padding-bottom: 50px;
   }
 
+  /* Live bar is 50px, not 56px. */
   .action-bar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -626,7 +742,7 @@
     right: 0;
     bottom: 0;
     z-index: 120;
-    height: 56px;
+    height: 50px;
     background: var(--color-uni-red);
   }
 
@@ -648,10 +764,8 @@
     background: var(--color-red-border);
   }
 
-  /* ⚠️ Do NOT lift the mobile nav panel to `bottom: 56px` to clear this bar.
-     The panel carries its own red "Apply now | Request info" footer, so ending
-     it above the action bar renders TWO identical red bars stacked on top of
-     each other. Left at `bottom: 0` (nav.css), the panel's z-index 130 simply
-     covers the bar's 120 while the menu is open, which is what the live site
-     looks like. */
+  /* ⚠️ Do NOT lift the mobile nav panel to clear this bar. The panel carries its
+     own red "Apply now | Request info" footer, so ending it above the action bar
+     renders TWO identical red bars stacked. Left at `bottom: 0` (nav.css), the
+     panel's z-index 130 simply covers the bar's 120 while the menu is open. */
 }

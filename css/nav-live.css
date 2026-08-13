@@ -104,9 +104,13 @@
 }
 
 /* ---- Nav bar: 79px, WHITE, square ------------------------------------- */
+/* ⚠️ The live white bar carries a soft drop shadow at REST, not only when
+   scrolled: `box-shadow: 0 4px 4px rgba(138,141,143,0.4)`. Without it the bar
+   and the hero below it read as one flat surface. */
 .main-nav {
   top: 61px; /* sits under the taller utility bar */
   background: var(--color-white);
+  box-shadow: 0 4px 4px rgba(138, 141, 143, 0.4);
 }
 
 .main-nav__bar {
@@ -124,7 +128,7 @@
   background: var(--color-white);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  box-shadow: 0 1px 0 rgba(33, 35, 34, 0.12);
+  box-shadow: 0 4px 4px rgba(138, 141, 143, 0.4);
 }
 
 .main-nav__logo {
@@ -137,7 +141,7 @@
   height: 32px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .main-nav__logo-lockup {
     width: 130px;
     height: 27px;
@@ -155,7 +159,9 @@
   border-bottom: 4px solid transparent;
   color: var(--color-uni-black);
   font-size: 15px;
+  line-height: 30px;
   font-weight: 400;
+  text-align: center;
 }
 
 /* ⚠️ The underline is #b62025, NOT the #c10016 rest red. Live rule:
@@ -413,8 +419,60 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 1024px) {
-  /* Live mobile header: 72px dark utility bar + 41px white bar. */
+/* ⚠️ nav.css collapses the desktop nav at ≤1024 (the prototype's breakpoint).
+   capella.edu holds the full desktop nav down to 992 and collapses at ≤991 —
+   confirmed by the live page's own inline `@media (max-width: 991px)`. This
+   window puts the desktop nav back for 992–1024, which nav.css would otherwise
+   have hidden. */
+@media (min-width: 992px) and (max-width: 1024px) {
+  .main-nav__links {
+    display: flex;
+  }
+
+  .main-nav__apply {
+    display: inline-flex;
+  }
+
+  .main-nav__menu-btn {
+    display: none;
+  }
+
+  .main-nav__bar {
+    min-height: 79px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 991px) {
+  /* Collapsed header: still a 61px utility bar here — it only grows to 72px
+     below 768. */
+  .main-nav {
+    top: 61px;
+    background: var(--color-white);
+  }
+
+  .main-nav__bar {
+    min-height: 41px;
+    border-radius: 0;
+  }
+
+  /* ⚠️ The bar is 41px on the live site, so the hamburger cannot be the
+     prototype's 44px square or it sets the bar's height instead. Live measures
+     45 × 40. */
+  .main-nav__menu-btn {
+    width: 45px;
+    height: 40px;
+  }
+
+  /* The megamenus are hidden once the mobile view stack takes over, so the
+     desktop link geometry above must not leak in and inflate the bar. */
+  .main-nav__item > a {
+    height: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Live grows the utility bar to 72px only below 768. */
   .utility-bar {
     height: 72px;
   }
@@ -426,22 +484,10 @@
 
   .main-nav {
     top: 72px;
-    background: var(--color-white);
-  }
-
-  .main-nav__bar {
-    min-height: 41px;
-    border-radius: 0;
-  }
-
-  /* The megamenus are hidden below 1024 (the mobile view stack takes over), so
-     the desktop link geometry above must not leak in and inflate the bar. */
-  .main-nav__item > a {
-    height: auto;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .utility-bar {
     position: sticky;
     top: 0;

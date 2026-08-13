@@ -295,12 +295,28 @@
               <i class="fa-sharp fa-regular fa-clipboard-list hero__find-icon" aria-hidden="true"></i>
               Find your program
             </p>
+            <!-- <button data-degree> matching the live markup: these are the
+                 program finder's controls, not links. -->
             <ul class="hero__chips">
-              <li><a href="#" class="chip-red">Bachelor&rsquo;s</a></li>
-              <li><a href="#" class="chip-red">Master&rsquo;s</a></li>
-              <li><a href="#" class="chip-red">Doctoral</a></li>
-              <li><a href="#" class="chip-red">Certificate</a></li>
+              <li><button type="button" class="chip-red" data-degree="bachelors" aria-pressed="false">Bachelor&rsquo;s</button></li>
+              <li><button type="button" class="chip-red" data-degree="masters" aria-pressed="false">Master&rsquo;s</button></li>
+              <li><button type="button" class="chip-red" data-degree="doctoral" aria-pressed="false">Doctoral</button></li>
+              <li><button type="button" class="chip-red" data-degree="certificate" aria-pressed="false">Certificate</button></li>
             </ul>
+
+            <!-- Revealed a step at a time by js/hero.js, as on the live site:
+                 chip → area of study → specialization. No submit button; the
+                 live finder has none. -->
+            <div class="hero__finder">
+              <p class="hero__field hero__field--area" hidden>
+                <label class="hero__label" for="hero-area">Select area of study</label>
+                <select class="hero__select" id="hero-area"></select>
+              </p>
+              <p class="hero__field hero__field--spec" hidden>
+                <label class="hero__label" for="hero-spec">Select specialization</label>
+                <select class="hero__select" id="hero-spec"></select>
+              </p>
+            </div>
           </div>
         </div>
         <!-- Desktop: bleeds off the right edge behind the copy. Mobile: stacks
@@ -354,19 +370,19 @@
             </h2>
             <dl class="stats__list">
               <div class="stat">
-                <dt class="stat__value display">40</dt>
+                <dt class="stat__value">40</dt>
                 <dd class="stat__label">Degree programs</dd>
               </div>
               <div class="stat">
-                <dt class="stat__value display">80</dt>
+                <dt class="stat__value">80</dt>
                 <dd class="stat__label">Specializations</dd>
               </div>
               <div class="stat">
-                <dt class="stat__value display">1,530+</dt>
+                <dt class="stat__value">1,530+</dt>
                 <dd class="stat__label">Courses available</dd>
               </div>
               <div class="stat">
-                <dt class="stat__value display">63%</dt>
+                <dt class="stat__value">63%</dt>
                 <dd class="stat__label">Part-time students</dd>
               </div>
             </dl>
@@ -652,6 +668,7 @@
     </footer>
 
     <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/hero.js"></script>
     <script type="module" src="/js/footer.js"></script>
   </body>
 </html>

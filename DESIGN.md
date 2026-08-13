@@ -104,10 +104,17 @@ has a non-zero bounding box, or hit-test with `elementFromPoint`.
 3. **Stats + popular programs** — same dark band. Left: H2 "YOU'VE GOT PLANS.
    WE'VE GOT PROGRAMS." over four stats — 40 Degree programs, 80 Specializations,
    1,530+ Courses available, 63% Part-time students — with a "Source: Capella
-   University Fact Sheet, as of December 31, 2024" footnote. Right: "Popular
-   programs" over four `#a9c5c9` cards (BS RN-to-BSN, MS in Applied Behavior
-   Analysis, MBA, MSW), each with an icon and a right arrow, then a red
-   "See all Capella programs" button.
+   University Fact Sheet, as of December 31, 2024" footnote (that link is
+   **white, weight 400, no underline**). Right: "Popular programs" over four
+   `#a9c5c9` cards (BS RN-to-BSN, MS in Applied Behavior Analysis, MBA, MSW),
+   each with an icon and a right arrow, then a red "See all Capella programs"
+   button.
+
+   ⚠️ **The stat figures are Inter Bold 60px / 72px — NOT the condensed display
+   face.** Labels are Inter Bold 22px / 26.4px. I had the figures on `.display`
+   (Acumin at `wdth 50`), which rendered them far too narrow. Cards are square
+   (radius 0) with `padding: 18.5px 30px` **plus a 4px transparent border**,
+   which is what makes them 90px tall rather than 82.
 4. **"MAKE YOUR MOVE"** (366px) — full-bleed red `#c10016` band, centered H2,
    six white tiles in a 2-column grid: Finish my degree, Get help with financial
    aid, Learn more about admissions, Find out more about scholarships, Apply,
@@ -183,6 +190,18 @@ hover**, not the red-on-white / red-hover that the theme's generic
 **Always confirm against `getComputedStyle` on the live element** before
 encoding a state. The theme class tells you which component it is; only the
 computed value tells you what it actually looks like on this page.
+
+### The sweep
+
+`scratchpad/probe.js` is the harness: it names each component, gives its selector
+per side, and dumps the same computed-property set on both pages so the two can be
+diffed offline. Run it on capella.edu and on the local build at the same viewport
+width. It found eight mismatches that four rounds of spot-checking had missed
+(stat figures on the wrong typeface, stat labels 6px small, programme-card padding,
+missing nav-bar shadow, card-link size/tracking, chip border, and two margins).
+
+**Prefer this over reading stylesheets.** Every mismatch in this project came from
+trusting a CSS rule or a Figma-era assumption instead of the rendered value.
 
 ### Verifying hover states in this environment
 
@@ -266,11 +285,76 @@ does exist in the theme but is used by exactly one unrelated element.)
 ⚠️ Only this menu could be sampled — the three grouped-list menus are
 Angular-rendered and never painted on a synthetic click.
 
+## Hero interaction (the program finder)
+
+Clicking a degree chip is not a link — it opens a two-step finder in place. The
+hero grows 562 → 677 at desktop.
+
+1. **Click a chip** → that chip goes to **`#3a0007`** (a third, darker red used
+   only for this selected state) and a "Select area of study" label + `<select>`
+   appear.
+2. **Choose an area** → a second "Select specialization" `<select>` appears,
+   populated with that degree + area's programmes.
+3. **Choose a programme** → the live site navigates.
+
+**There is no submit button.** After step 2 the only visible controls are the
+four chips and the two selects.
+
+| Part | Value |
+| --- | --- |
+| Label | 18px `#212322`, line-height 1.5 |
+| Select | 212 × 50, `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill |
+| Layout | `display: flex; gap: 30px; align-items: flex-end` — the two selects sit **side by side** (x=165 and x=407), each with its label above it |
+| Label → select offset | 41px (27px label + 14px gap) |
+
+The area/programme catalogue is **identical to the desktop megamenu's third
+level**, so `js/programs.js` is shared by the nav and the hero rather than
+duplicated — verified Bachelor's → Business, Health Sciences, Information
+Technology, Nursing, Psychology, Social Work, and Bachelor's + Nursing →
+BSN (Prelicensure), RN-to-BSN.
+
+## Breakpoints
+
+⚠️ **Bootstrap 4 breakpoints — 991 / 767 / 575, not round numbers.** Measured
+across 1440 / 992 / 768 / 576 / 375. Using 1024/768 collapses the two-column
+bands a full breakpoint early: at 768 the live site still shows format cards,
+stats and move tiles two-up.
+
+| | 1440 | 992 | 768 | 576 | 375 |
+| --- | --- | --- | --- | --- | --- |
+| Utility bar | 61 | 61 | 61 | **72** | 72 |
+| Nav bar | 79 | 79 | **41** | 41 | 41 |
+| Hamburger | — | — | **yes** | yes | yes |
+| Hero artwork | bg image | bg image | **stacked `<img>`** | `<img>` | `<img>` |
+| H1 | 72px | 72px | **40px** | 40px | 40px |
+| Stat value | 60px | 60px | **24px** | 24px | 24px |
+| Stat label | 22px | 22px | **16px** | 16px | 16px |
+| Format cards | 2 col | 2 col | 2 col | 2 col | **1 col** |
+| Stats / programmes | 2 col | 2 col | 2 col | **1 col** | 1 col |
+| Move tiles | 2 col | 2 col | 2 col | **1 col** | 1 col |
+| Action bar | — | — | — | — | **50px** |
+
+So:
+
+- **≤991** — nav collapses (41px bar, hamburger 45×40), hero swaps to the stacked
+  `<img>` and drops the background artwork, H1 40px, stat value 24px, stat
+  label 16px.
+- **≤767** — utility bar grows to 72px, stats/programmes stack, move tiles 1 col,
+  hero selects stack.
+- **≤575** — format cards 1 col, hero chips 2-up, fixed action bar appears (50px,
+  not 56px) and `<body>` reserves 50px.
+
+⚠️ `nav.css` collapses the nav at its own ≤1024, so `nav-live.css` carries a
+`@media (min-width: 992px) and (max-width: 1024px)` window that puts the desktop
+nav back for that band. The hamburger must also be **45 × 40**, not the
+prototype's 44 × 44, or it sets the bar's height to 44 instead of 41.
+
 ## Mobile-only: fixed bottom action bar
 
-A red `#c10016` bar pinned to the bottom of the viewport, split in two by a
-vertical rule: **"Apply now"** | **"Request info"**. This is the element the
-bottom-sheet work most likely attaches to — worth confirming before building.
+A red `#c10016` bar pinned to the bottom of the viewport, **50px tall**, split in
+two by a vertical rule: **"Apply now"** | **"Request info"**. Appears at ≤575.
+This is the element the bottom-sheet work most likely attaches to — worth
+confirming before building.
 
 The prototype's `<meta name="theme-color" content="#c10016">` (already in
 `index.html`) exists to tint iOS Safari's toolbar to match this bar.
