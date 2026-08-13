@@ -175,10 +175,13 @@
   gap: 30px;
 }
 
+/* 10px rounded corners on the live site, with the terminal link row picking up
+   the bottom two via its own `border-radius: 0 0 10px 10px`. */
 .format-card {
   display: flex;
   flex-direction: column;
   padding: 30px;
+  border-radius: 10px;
   background: var(--color-card-grey);
   color: var(--color-uni-black);
 }
@@ -201,13 +204,18 @@
   line-height: 1.6;
 }
 
-/* The card's terminal link sits on its own hairline-separated row, flush to the
-   card's bottom edge — hence the negative margins cancelling the 30px padding. */
+/* ⚠️ The terminal row is WHITE, not a transparent strip showing the card's grey
+   through it — that white band against the #f0f0ef body is a big part of what
+   makes the live card read correctly. 1px #d9d9d6 rule above it, and it owns the
+   card's bottom two corners. Negative margins cancel the card's 30px padding so
+   it bleeds to the edges. */
 .format-card__link {
   margin: auto -30px -30px;
-  padding: 18px 30px;
-  border-top: 1px solid rgba(33, 35, 34, 0.12);
-  color: var(--color-red-border);
+  padding: 15px 30px;
+  border-top: 1px solid #d9d9d6;
+  border-radius: 0 0 10px 10px;
+  background: var(--color-white);
+  color: var(--color-uni-red);
   font-size: 0.9375rem;
   font-weight: 700;
   text-align: center;

@@ -134,9 +134,12 @@ function initMegaMenu() {
     // same height regardless of which trigger you used.
     panel.style.top = `${barRect.bottom - navRect.top}px`;
 
-    // The wide menu starts at the bar's left edge; the narrow ones are CENTRED
-    // under their trigger. The trigger's padding is symmetric, so its box
-    // centre is the label's centre.
+    // The wide menu starts at the bar's left edge; the narrow ones are
+    // LEFT-ALIGNED to their trigger.
+    // ⚠️ Not centred. This used to centre them, which is what the prototype's
+    // Figma showed, but capella.edu left-aligns: measured at a 1440 viewport,
+    // all three list panels' left edges sit exactly on their trigger's left
+    // (Capella Experience 539/539, Financing 736/736, Admissions 865/865).
     let anchor;
     if (panel.classList.contains('megamenu--split')) {
       anchor = barRect.left;
@@ -145,9 +148,9 @@ function initMegaMenu() {
       // offsetWidth is readable here because open() unhides the panel before
       // calling this.
       const panelWidth = panel.offsetWidth;
-      anchor = triggerRect.left + triggerRect.width / 2 - panelWidth / 2;
-      // Clamp to the viewport — Admissions sits far enough right that centring
-      // alone would hang the panel off the edge on narrower desktops.
+      anchor = triggerRect.left;
+      // Clamp to the viewport — Admissions sits far enough right that a 300px
+      // panel would hang off the edge on narrower desktops.
       anchor = Math.min(Math.max(anchor, 0), window.innerWidth - panelWidth);
     }
     panel.style.left = `${anchor - navRect.left}px`;

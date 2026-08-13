@@ -94,9 +94,13 @@ has a non-zero bounding box, or hit-test with `elementFromPoint`.
    a clipboard icon, then four **red chips** (radius 7.5px, min-height 48px):
    Bachelor's, Master's, Doctoral, Certificate. Copy column is 645px at x=150.
 2. **"'One size fits all' never fit you. Learn your way."** — dark `#212322`
-   band, H2 centered in white, then two `#f0f0ef` cards side by side:
-   *FlexPath / Learn on demand* and *GuidedPath / Structured for your success*,
-   each ending in a red link ("Is FlexPath right for you?").
+   band, H2 centered in white, then two cards side by side: *FlexPath / Learn on
+   demand* and *GuidedPath / Structured for your success*.
+   Card: `#f0f0ef` body, **`border-radius: 10px`**, 30px padding.
+   ⚠️ The terminal link row is **WHITE**, not a transparent strip showing the
+   grey through — `border-top: 1px solid #d9d9d6`,
+   `border-radius: 0 0 10px 10px`, padding `15px 30px`, text `#c10016`. That
+   white band against the grey body is a big part of the card's look.
 3. **Stats + popular programs** — same dark band. Left: H2 "YOU'VE GOT PLANS.
    WE'VE GOT PROGRAMS." over four stats — 40 Degree programs, 80 Specializations,
    1,530+ Courses available, 63% Part-time students — with a "Source: Capella
@@ -212,7 +216,30 @@ prototype, but the ramp runs **light**, not dark:
 | "Find your program" CTA | `#c10016`, white, Inter-Bold 16px |
 | Open trigger | red 4px bottom border |
 
-Panel opens flush under the bar (0px gap) at the content column's left edge (150).
+Panel opens flush under the bar (0px gap) at the content column's left edge (150),
+paints its own `#212322`, and carries `box-shadow: 0 7.5px 15px rgba(0,0,0,.176)`.
+
+⚠️ **No panel has a red top border.** Both panels compute `border-top: 0px`
+despite carrying `border-top border-brand-red` classes. The red bar above an open
+panel is the **trigger's own 3px `#b62025` underline**, sitting flush on the
+panel's top edge — so it spans the trigger's width, not the panel's.
+
+## Grouped-list menus (Experience / Financing / Admissions)
+
+⚠️ **These panels are LIGHT, not dark.** Easy to get wrong: they are
+Angular-driven and never render on a synthetic click, so they can't be sampled
+the usual way. Force `display: block` on the live panel to inspect them.
+
+| Part | Value |
+| --- | --- |
+| Panel | `#f5f5f5` (`gray-bg`), 300px wide, no border-top, same shadow |
+| Rows | `#111` at 16px |
+| Group headings | `#212322`, bold |
+| Row hover | white fill, `#111` text (`.level1-dd .nav-link:hover`) |
+
+**Anchoring: left-aligned to the trigger, not centred.** Measured at 1440 —
+Capella Experience 539/539, Financing 736/736, Admissions 865/865. The prototype
+centred them, which was a visible mismatch.
 
 **The trigger is NEVER filled**, in any state. capella.edu's theme enforces
 `.headervc .navbar .navbar-nav .nav-item > .nav-link:hover { background: 0 0 !important }`

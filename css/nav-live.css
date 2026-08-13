@@ -259,9 +259,21 @@
  * click. They follow the same ramp here; verify against the live site if exact
  * parity on those matters.
  */
+/* ⚠️ NO red top border. Both live panels compute `border-top: 0px` despite
+   carrying `border-top border-brand-red` classes. The red bar you see above an
+   open panel is the TRIGGER's own 3px #b62025 underline, which sits flush on the
+   panel's top edge — not a border on the panel. Adding one here doubles it up
+   and makes it span the panel's full width instead of the trigger's. */
 .megamenu {
-  border-top: 4px solid var(--color-uni-red);
-  box-shadow: 0 12px 24px rgba(33, 35, 34, 0.18);
+  border-top: 0;
+  box-shadow: 0 7.5px 15px rgba(0, 0, 0, 0.176);
+}
+
+/* The live split panel paints its own #212322 (its `dark-bg` class) rather than
+   relying on the columns to cover it, so any sub-pixel gap between columns can't
+   show the page through. */
+.megamenu--split {
+  background: var(--menu-surface-1);
 }
 
 .megamenu__col--areas {
@@ -328,17 +340,42 @@
   outline: 2px solid var(--color-uni-black);
 }
 
-/* Grouped-list menus (Experience / Financing / Admissions) — dark panel, so the
-   live rule that applies is the generic
-   `.navbar-inverse .dropdown-menu .nav-link:hover { color:#b62025 }` plus
-   `text-decoration: underline`. On a dark panel #b62025 is close to unreadable,
-   so this keeps the light row wash for legibility and only adds the underline.
-   ⚠️ Deliberate deviation — these three menus could not be sampled live (they
-   are Angular-rendered and never paint on a synthetic click). */
+/* ---- Grouped-list menus (Experience / Financing / Admissions) ----------
+ * ⚠️ These panels are LIGHT on the live site, not dark. I originally assumed
+ * they followed the Degrees menu's dark panel because a synthetic click never
+ * rendered them (they are Angular-driven). Forcing `display: block` on the
+ * live panel finally exposed them:
+ *     .dropdown-menu.level1-dd.gray-bg  → background #f5f5f5
+ *     rows                              → #111 at 16px
+ *     hover (`.level1-dd .nav-link:hover`) → white fill, #111 text
+ * Same light treatment as the Degrees menu's areas column.
+ */
+.megamenu--list {
+  background: #f5f5f5;
+  color: var(--color-uni-black);
+}
+
+.megamenu--list .megamenu__group-title,
+.megamenu--list .megamenu__group-title a {
+  color: var(--color-uni-black);
+  font-weight: 700;
+}
+
+.megamenu--list .megamenu__area-list a {
+  color: #111;
+  font-size: var(--text-body);
+}
+
 .megamenu--list .megamenu__area-list a:hover,
 .megamenu--list .megamenu__group-title a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  text-decoration: underline;
+  background: var(--color-white);
+  color: #111;
+  text-decoration: none;
+}
+
+.megamenu--list .megamenu__area-list a:focus-visible,
+.megamenu--list .megamenu__group-title a:focus-visible {
+  outline: 2px solid var(--color-uni-black);
 }
 
 /* The megamenu's terminal CTA has its OWN hover red — #8a0010, not #74000d. */
