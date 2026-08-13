@@ -300,7 +300,20 @@ four chips and the two selects.
 | Part | Value |
 | --- | --- |
 | Label | 18px `#212322`, line-height 1.5 |
-| Select | 212 × 50, `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill |
+| Select | 212 × 50 (345 at mobile), `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill, `padding: 14px 34px 14px 24px` |
+| Chevron | **custom 12×8 SVG**, `right: 24px`, vertically centred, `#212322` |
+
+⚠️ The select sets `appearance: none` and overlays its own chevron —
+`<path d="M6 7.4L0 1.4L1.4 0L6 4.6L10.6 0L12 1.4L6 7.4Z">`. Leaving the browser's
+native arrow is the most obvious tell that it isn't the real control: the default
+is thinner and sits closer to the edge. The 34px right padding is the chevron's
+room.
+
+⚠️ At mobile the chips become an **equal-width 2×2 grid** — `column-gap: 18px`,
+`row-gap: 12px` (desktop uses a uniform 12px in a single row). The grid sizes the
+`<li>`, so `.chip-red` needs `width: 100%` too; being `inline-flex` it otherwise
+stays content-width and the chips come out ragged (131/115/113/132) with a 50px
+visual gap.
 | Layout | `display: flex; gap: 30px; align-items: flex-end` — the two selects sit **side by side** (x=165 and x=407), each with its label above it |
 | Label → select offset | 40.5px (22px label box + 18.5px gap) |
 

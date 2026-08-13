@@ -214,13 +214,25 @@
   color: var(--color-uni-black);
 }
 
+/* ⚠️ `appearance: none` plus our own chevron. The live select hides the native
+   arrow and overlays a 12×8 SVG at `right: 24px`, vertically centred — the
+   browser default arrow is thinner, sits closer to the edge, and is the most
+   obvious tell that this isn't the real control. Padding is
+   `14px 34px 14px 24px`: the text starts 24px in and the 34px right gutter is
+   the chevron's room. */
 .hero__select {
   width: 212px;
   height: 50px;
-  padding: 0 14px;
+  padding: 14px 34px 14px 24px;
   border: 1px solid var(--color-uni-black);
   border-radius: 10px;
-  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M6 7.4L0 1.4L1.4 0L6 4.6L10.6 0L12 1.4L6 7.4Z' fill='%23212322'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 24px center;
+  background-size: 12px 8px;
   color: var(--color-uni-black);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -754,9 +766,24 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Live 2×2 grid at mobile: equal-width chips, 18px across and 12px down
+     (the desktop row uses a uniform 12px). */
   .hero__chips {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+    row-gap: 12px;
+  }
+
+  /* ⚠️ The grid sizes the <li>, but `.chip-red` is `inline-flex` and so stays
+     content-width inside its cell — the chips came out 131/115/113/132 with a
+     ragged 50px visual gap instead of an even 2×2. Stretch them to fill. */
+  .hero__chips > li {
+    display: flex;
+  }
+
+  .hero__chips .chip-red {
+    width: 100%;
   }
 
   .accred__logos img {
