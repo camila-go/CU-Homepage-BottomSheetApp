@@ -139,7 +139,7 @@ not eyeballed. **The site's root font-size is 15px**, so its rem values convert 
 
 | Control | Live class | Rest | Hover | Active / Focus |
 | --- | --- | --- | --- | --- |
-| Nav link | `.nav-link .brand-underline` | 4px transparent bottom border | **3px `#b62025`** bottom border, no bg change | same underline |
+| Nav link | `.nav-link .brand-underline` | 4px transparent bottom border | **3px `#b62025`** bottom border, **background stays transparent** | same underline; still no fill |
 | Request information | `white-outline-btn` | transparent, 2px white border | **`rgba(255,255,255,.1)`**, text stays white | active `rgba(255,255,255,.2)`; focus 2px white outline |
 | Apply now | `primary-fill-btn` | `#c10016`, shadow `0 5px 20px rgba(0,0,0,.1)` | **`#74000d`**, shadow `…,.2` | active shadow `…,.25`; focus 4px `#e68c96` |
 | Hero chips | `primary-fill-btn` | `#c10016`, radius 7.5px | `#74000d` | as above |
@@ -213,6 +213,28 @@ prototype, but the ramp runs **light**, not dark:
 | Open trigger | red 4px bottom border |
 
 Panel opens flush under the bar (0px gap) at the content column's left edge (150).
+
+**The trigger is NEVER filled**, in any state. capella.edu's theme enforces
+`.headervc .navbar .navbar-nav .nav-item > .nav-link:hover { background: 0 0 !important }`
+for hover, focus and active — the only affordance is the red underline.
+
+⚠️ The prototype's `nav.css` paints the open/current trigger with a grey pill
+(`--nav-pill-current`, `#5e6361`) via selectors at specificity **(0,3,0)**:
+
+```css
+.main-nav__item > a[aria-expanded='true']:hover { background: var(--nav-pill-current) }
+.main-nav__item > a[aria-current='page']:hover  { background: var(--nav-pill-current) }
+```
+
+A `.main-nav__item > a:hover` override is only (0,2,0) and loses, so a trigger
+that was **both open and hovered** showed a grey block on the white bar. Every
+state in `nav-live.css` is spelled out at matching specificity for this reason —
+don't collapse them back into one short selector.
+
+**Opening behaviour:** the live triggers carry `data-toggle="dropdown"` (Bootstrap
+**click**), and the `<li>`s do *not* carry `dropdown-hover`, so hovering does not
+open a menu. Our click-to-open matches. (`.dropdown-hover:hover > .dropdown-menu`
+does exist in the theme but is used by exactly one unrelated element.)
 
 ⚠️ Only this menu could be sampled — the three grouped-list menus are
 Angular-rendered and never painted on a synthetic click.

@@ -160,30 +160,41 @@
 
 /* ⚠️ The underline is #b62025, NOT the #c10016 rest red. Live rule:
    `.nav-link:hover .brand-underline { border-bottom: .2rem solid #b62025 }`
-   — .2rem at the site's 15px root is 3px, not 4px. */
+   — .2rem at the site's 15px root is 3px, not 4px.
+ *
+ * ⚠️ SPECIFICITY: nav.css paints the open/current trigger with the prototype's
+ * grey pill (`--nav-pill-current`, #5e6361) using
+ *     .main-nav__item > a[aria-expanded='true']:hover   → (0,3,0)
+ *     .main-nav__item > a[aria-current='page']:hover     → (0,3,0)
+ * A plain `.main-nav__item > a:hover` override is only (0,2,0) and LOSES, so a
+ * trigger that is both open and hovered showed a grey block on the white bar —
+ * capella.edu never fills the trigger (its theme forces
+ * `.nav-item > .nav-link:hover { background: 0 0 !important }`). Every state
+ * below is therefore spelled out at matching specificity. Don't collapse these
+ * back into one short selector. */
 .main-nav__item > a:hover,
-.main-nav__item > a[aria-expanded='true'] {
+.main-nav__item > a:active,
+.main-nav__item > a[aria-expanded='true'],
+.main-nav__item > a[aria-expanded='true']:hover,
+.main-nav__item > a[aria-current='page'],
+.main-nav__item > a[aria-current='page']:hover {
   background: none;
-  border-bottom-width: 3px;
-  border-bottom-color: var(--color-red-border);
+  transform: none;
   text-decoration: none;
 }
 
-.main-nav__item > a:active {
-  background: none;
+.main-nav__item > a:hover,
+.main-nav__item > a[aria-expanded='true'],
+.main-nav__item > a[aria-expanded='true']:hover,
+.main-nav__item > a[aria-current='page'],
+.main-nav__item > a[aria-current='page']:hover {
+  border-bottom-width: 3px;
+  border-bottom-color: var(--color-red-border);
 }
 
 .main-nav__item > a:focus-visible {
   outline: 2px solid var(--color-uni-black);
   outline-offset: -4px;
-}
-
-/* The prototype marks the current item with a solid dark pill; on white that
-   would read as a filled black lozenge. Use the same red underline instead. */
-.main-nav__item > a[aria-current] {
-  background: none;
-  border-bottom-width: 3px;
-  border-bottom-color: var(--color-red-border);
 }
 
 .main-nav__links {
