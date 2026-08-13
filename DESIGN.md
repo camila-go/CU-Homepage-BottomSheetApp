@@ -305,7 +305,36 @@ four chips and the two selects.
 | Label | 18px `#212322`, line-height 1.5 |
 | Select | 212 × 50, `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill |
 | Layout | `display: flex; gap: 30px; align-items: flex-end` — the two selects sit **side by side** (x=165 and x=407), each with its label above it |
-| Label → select offset | 41px (27px label + 14px gap) |
+| Label → select offset | 40.5px (22px label box + 18.5px gap) |
+
+⚠️ The label's line-height is ~1.22 (22px at 18px), **not** 1.5 — at 1.5 the box
+is 27px and the label sits 5px low against its select.
+
+### Hero vertical rhythm (desktop)
+
+Every gap is a half-pixel value; rounding them all up drifts the whole column.
+
+| From → to | Gap |
+| --- | --- |
+| Band top → h1 top | **82.5px** (60px wrapper + a nested 22.5px) |
+| h1 → body | 22.5px |
+| body → "Find your program" | 30px |
+| "Find your program" → chips | 15px |
+| chips → finder label | 32.5px |
+| label → select | 18.5px |
+| last select → band bottom | **120px** (22.5 + 15 + 22.5 + 60) |
+
+Closed band 562px; open 677px. The 120px below the selects only exists when the
+finder is open, so it is applied via a class the JS toggles — adding it
+unconditionally pushes the closed band past 562.
+
+At ≤991 all of those wrapper paddings drop to **37.5px** (15 + 22.5), the selects
+go full-width (345 at 375), and the space below the last select is 75px.
+
+⚠️ **`.hero__inner` must drop its 15px inner padding at ≤991.** The container is
+already `min(1140px, 100% - 30px)`, so at 375 it is 345 wide at x=15; the extra
+padding double-indented every piece of hero copy to x=30 while live keeps it on
+the 15px gutter. At desktop the padding IS needed (150 + 15 = 165).
 
 The area/programme catalogue is **identical to the desktop megamenu's third
 level**, so `js/programs.js` is shared by the nav and the hero rather than

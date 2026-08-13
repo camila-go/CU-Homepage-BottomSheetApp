@@ -66,6 +66,9 @@ function initHeroFinder() {
     const map = MEGA_PROGRAMS[DEGREE_KEYS[chip.dataset.degree]] || {};
     fill(areaSelect, 'Select area of study', Object.keys(map));
     areaField.hidden = false;
+    // Opens up the 60px of breathing room the live hero has below the selects.
+    // Class-gated rather than unconditional so the CLOSED hero stays 562px.
+    finder.classList.add('is-open');
     // Step 2 always resets when the degree changes — the previous area belonged
     // to the level you just left.
     specField.hidden = true;

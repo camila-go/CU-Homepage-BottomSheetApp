@@ -111,31 +111,40 @@
   padding-inline: 15px;
 }
 
+/* ⚠️ 82.5px above, 60px below — not a symmetric 60. Live nests a `.py-4`
+   (22.5px) inside the content wrapper's 60px, so the h1's top sits 82.5px below
+   the band's top edge. With a symmetric 60 the open hero came out 653px instead
+   of 677. The closed hero is unaffected: its content is shorter than the 562px
+   min-height either way. */
 .hero__content {
   position: relative;
   z-index: 1;
   max-width: 585px;
-  padding-block: 60px;
+  padding-block: 82.5px 60px;
 }
 
 .hero__title {
-  margin: 0 0 24px;
+  /* Live gap h1→body is 22.5px, not 24. */
+  margin: 0 0 22.5px;
   font-size: var(--text-h1-live);
   color: var(--color-uni-black);
 }
 
 .hero__body {
-  margin: 0 0 32px;
+  /* Live gap body→"Find your program" is 30px. */
+  margin: 0 0 30px;
   max-width: 585px;
   font-size: var(--text-body-lg);
   line-height: 1.5;
 }
 
+/* Live: the label TEXT starts at x=192.5 (the clipboard icon sits left of it),
+   and the row sits 15px above the chips. */
 .hero__find {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0 0 16px;
+  gap: 14px;
+  margin: 0 0 15px;
   font-size: var(--text-body);
   font-weight: 700;
 }
@@ -170,15 +179,27 @@
   display: flex;
   align-items: flex-end;
   gap: 30px;
-  margin-top: 24px;
+  /* Live gap from the chips' bottom to the label's top is 32.5px. */
+  margin-top: 32.5px;
 }
 
-/* Live label→select offset is 41px (label top 606, select top 647): an 18px
-   label at line-height 1.5 (27px) plus a 14px gap. */
+/* ⚠️ Live has 120px between the selects' bottom edge and the bottom of the hero
+   band — 22.5px field margin + 15px finder padding + 22.5px inner padding + the
+   60px content padding. Ours only had the 60px, so the selects sat ~84px too
+   close to the fold. Added as a class js/hero.js toggles, NOT unconditionally:
+   the finder is empty when closed and this would otherwise push the closed
+   hero past its 562px. */
+.hero__finder.is-open {
+  padding-bottom: 60px;
+}
+
+/* Live label→select offset is 40.5px: a 22px-tall label box plus an 18.5px gap.
+   ⚠️ The label's line-height is ~1.22 (22px at 18px), NOT 1.5 — at 1.5 the box is
+   27px and the label sits 5px too low against its select. */
 .hero__field {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18.5px;
   margin: 0;
 }
 
@@ -189,7 +210,7 @@
 
 .hero__label {
   font-size: 1.125rem; /* 18px */
-  line-height: 1.5;
+  line-height: 22px;
   color: var(--color-uni-black);
 }
 
@@ -653,9 +674,23 @@
     object-fit: cover;
   }
 
+  /* ⚠️ Drop the inner 15px padding here. `.hero__inner` is already
+     `min(1140px, 100% - 30px)`, so at 375 it is 345 wide sitting at x=15 — the
+     extra padding pushed all the hero copy to x=30 while live keeps it on the
+     15px gutter. At desktop the padding IS needed (150 container + 15 = 165). */
+  .hero__inner {
+    padding-inline: 0;
+  }
+
+  /* Live mobile: 15px wrapper padding + the nested 22.5px = 37.5px above the h1
+     and below the finder (measured 75px below the last select = 37.5 + 37.5). */
   .hero__content {
     max-width: none;
-    padding-block: 40px;
+    padding-block: 37.5px;
+  }
+
+  .hero__finder.is-open {
+    padding-bottom: 37.5px;
   }
 
   .hero__title {
