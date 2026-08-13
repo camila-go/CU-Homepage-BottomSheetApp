@@ -71,12 +71,15 @@
   min-width: 0;
 }
 
+/* Live capella.edu renders these UPPERCASE at 13px/#cdcdcd — the prototype had
+   them sentence-case at 15px. Measured 2026-08-12; see DESIGN.md. */
 .footer__column-heading {
   margin: 0 0 16px;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem; /* 13px */
   font-weight: 700;
   line-height: 1.5;
-  color: var(--color-neutral-100);
+  text-transform: uppercase;
+  color: #cdcdcd;
 }
 
 .footer__column ul {

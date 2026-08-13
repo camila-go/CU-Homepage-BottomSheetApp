@@ -28,7 +28,13 @@
          others build on. -->
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/nav.css" />
+    <!-- ⚠️ Must come after nav.css — it re-paints the prototype's dark pill
+         header to the live capella.edu skin. Remove this one line to get the
+         prototype look back. -->
+    <link rel="stylesheet" href="css/nav-live.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/footer.css" />
+    <link rel="preload" as="image" href="/assets/hero-wide.jpg" fetchpriority="high" />
     <script src="https://kit.fontawesome.com/f1bee60eab.js" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -46,21 +52,16 @@
     <header class="main-nav">
       <div class="main-nav__wrapper page-container">
         <nav class="main-nav__bar" aria-label="Main navigation">
+          <!-- The live site uses ONE horizontal lockup on the white bar. The
+               prototype's separate white shield + wordmark are still in
+               public/assets if the dark skin is ever restored. -->
           <a href="#" class="main-nav__logo" aria-label="Capella University home">
             <img
-              src="/assets/nav-shield.svg"
-              alt=""
-              class="main-nav__logo-shield logo-img"
-              width="31"
-              height="35"
-              decoding="async"
-            />
-            <img
-              src="/assets/nav-wordmark.svg"
+              src="/assets/logo-horizontal.svg"
               alt="Capella University"
-              class="main-nav__logo-wordmark logo-img"
-              width="127"
-              height="33"
+              class="main-nav__logo-lockup logo-img"
+              width="153"
+              height="32"
               decoding="async"
             />
           </a>
@@ -272,9 +273,248 @@
       </div>
     </header>
 
+    <!-- ============================================================
+         Homepage bands, built to match www.capella.edu (see DESIGN.md).
+         Copy is Capella's own published wording, taken from the live page.
+         Links are `#` — this is a prototype, so only the layout is real.
+         The bottom sheet itself goes in §7 at the end.
+         ============================================================ -->
     <main>
-      <!-- Bottom-sheet work goes here. -->
+      <!-- 1 ── Hero ------------------------------------------------ -->
+      <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero__inner">
+          <div class="hero__content">
+            <h1 id="hero-heading" class="hero__title display">What can&rsquo;t you do</h1>
+            <p class="hero__body">
+              You&rsquo;re always striving to do better in your life and your career &ndash; and you
+              never stop moving forward. So, when it&rsquo;s time for your next move, you take it.
+              With our online learning formats and career-focused degree programs, you can turn
+              ambition into achievement and prove what&rsquo;s possible.
+            </p>
+            <p class="hero__find">
+              <i class="fa-sharp fa-regular fa-clipboard-list hero__find-icon" aria-hidden="true"></i>
+              Find your program
+            </p>
+            <ul class="hero__chips">
+              <li><a href="#" class="chip-red">Bachelor&rsquo;s</a></li>
+              <li><a href="#" class="chip-red">Master&rsquo;s</a></li>
+              <li><a href="#" class="chip-red">Doctoral</a></li>
+              <li><a href="#" class="chip-red">Certificate</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Desktop: bleeds off the right edge behind the copy. Mobile: stacks
+             above it. `aria-hidden` because the headline carries the meaning. -->
+        <img
+          src="/assets/hero-group.jpg"
+          alt="A group of men and women"
+          class="hero__image"
+          width="640"
+          height="432"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </section>
+
+      <!-- 2 ── Learning formats ------------------------------------ -->
+      <section class="formats" aria-labelledby="formats-heading">
+        <div class="page-container">
+          <h2 id="formats-heading" class="formats__title display">
+            &lsquo;One size fits all&rsquo; never fit you. Learn your way.
+          </h2>
+          <div class="formats__grid">
+            <article class="format-card">
+              <img src="/assets/flexpath-white.svg" alt="FlexPath" class="format-card__logo" width="180" height="45" loading="lazy" decoding="async" />
+              <h3 class="format-card__title">Learn on demand</h3>
+              <p class="format-card__body">
+                Set your own deadlines and use your experience to complete courses in select
+                programs at your own pace. The faster you move, the more you can save on tuition.
+              </p>
+              <a href="#" class="format-card__link">Is FlexPath right for you?</a>
+            </article>
+            <article class="format-card">
+              <img src="/assets/guidedpath-white.svg" alt="GuidedPath" class="format-card__logo" width="190" height="45" loading="lazy" decoding="async" />
+              <h3 class="format-card__title">Structured for your success</h3>
+              <p class="format-card__body">
+                Enjoy the flexibility to study anywhere, anytime with our GuidedPath learning
+                format, available in all programs. Structured timelines keep you on track.
+              </p>
+              <a href="#" class="format-card__link">Is GuidedPath right for you?</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 ── Stats + popular programs ---------------------------- -->
+      <section class="stats" aria-labelledby="stats-heading">
+        <div class="page-container stats__grid">
+          <div class="stats__left">
+            <h2 id="stats-heading" class="stats__title display">
+              You&rsquo;ve got plans. We&rsquo;ve got programs.
+            </h2>
+            <dl class="stats__list">
+              <div class="stat">
+                <dt class="stat__value display">40</dt>
+                <dd class="stat__label">Degree programs</dd>
+              </div>
+              <div class="stat">
+                <dt class="stat__value display">80</dt>
+                <dd class="stat__label">Specializations</dd>
+              </div>
+              <div class="stat">
+                <dt class="stat__value display">1,530+</dt>
+                <dd class="stat__label">Courses available</dd>
+              </div>
+              <div class="stat">
+                <dt class="stat__value display">63%</dt>
+                <dd class="stat__label">Part-time students</dd>
+              </div>
+            </dl>
+            <p class="stats__source">
+              Source: <a href="#"><cite>Capella University Fact Sheet</cite></a>, as of December 31, 2024
+            </p>
+          </div>
+
+          <div class="stats__right">
+            <h3 class="programs__title">Popular programs</h3>
+            <ul class="programs">
+              <li>
+                <a href="#" class="program-card">
+                  <img src="/assets/icons/nursing.svg" alt="" class="program-card__icon" width="45" height="45" loading="lazy" decoding="async" />
+                  <span class="program-card__text">
+                    <span class="program-card__level">BS</span>
+                    <span class="program-card__name">RN-to-BSN</span>
+                  </span>
+                  <span class="program-card__arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="program-card">
+                  <img src="/assets/icons/behaviors.svg" alt="" class="program-card__icon" width="45" height="45" loading="lazy" decoding="async" />
+                  <span class="program-card__text">
+                    <span class="program-card__level">MS</span>
+                    <span class="program-card__name">MS in Applied Behavior Analysis</span>
+                  </span>
+                  <span class="program-card__arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="program-card">
+                  <img src="/assets/icons/briefcase.svg" alt="" class="program-card__icon" width="45" height="45" loading="lazy" decoding="async" />
+                  <span class="program-card__text">
+                    <span class="program-card__level">MBA</span>
+                    <span class="program-card__name">Master of Business Administration</span>
+                  </span>
+                  <span class="program-card__arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="program-card">
+                  <img src="/assets/icons/handshake.svg" alt="" class="program-card__icon" width="45" height="45" loading="lazy" decoding="async" />
+                  <span class="program-card__text">
+                    <span class="program-card__level">MSW</span>
+                    <span class="program-card__name">Master of Social Work</span>
+                  </span>
+                  <span class="program-card__arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+            </ul>
+            <a href="#" class="btn-red programs__cta">See all Capella programs</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 ── Make your move -------------------------------------- -->
+      <section class="move" aria-labelledby="move-heading">
+        <div class="move__inner">
+          <h2 id="move-heading" class="move__title display">Make your move</h2>
+          <ul class="move__tiles">
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/diploma.svg" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Finish my degree
+              </a>
+            </li>
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/financial-aid.svg" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Get help with financial aid
+              </a>
+            </li>
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/admissions.svg" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Learn more about admissions
+              </a>
+            </li>
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/scholarship.svg" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Find out more about scholarships
+              </a>
+            </li>
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/student.png" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Apply
+              </a>
+            </li>
+            <li>
+              <a href="#" class="move-tile">
+                <img src="/assets/icons/deadlines.svg" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
+                Explore FlexPath
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 5 ── Accreditation --------------------------------------- -->
+      <section class="accred" aria-labelledby="accred-heading">
+        <div class="page-container">
+          <!-- ⚠️ accred-*.png, NOT the prototype's accr-*.svg. Those are WHITE
+               knockout artwork drawn for a dark band — on this white band they
+               load fine, occupy layout, and are simply invisible. These are the
+               live site's full-colour versions. -->
+          <ul class="accred__logos">
+            <li><img src="/assets/accred-acbsp.png" alt="Capella University offers multiple business programs accredited by the Accreditation Council for Business Schools and Programs" width="255" height="180" loading="lazy" decoding="async" /></li>
+            <li><img src="/assets/accred-cacrep.png" alt="Council for Accreditation of Counseling and Related Educational Programs" width="255" height="180" loading="lazy" decoding="async" /></li>
+            <li><img src="/assets/accred-ccne.png" alt="The BSN, MSN, and DNP degree programs at Capella University are accredited by the Commission on Collegiate Nursing Education" width="255" height="180" loading="lazy" decoding="async" /></li>
+            <li><img src="/assets/accred-cswe.png" alt="Accredited by the Council on Social Work Education Board of Accreditation" width="448" height="300" loading="lazy" decoding="async" /></li>
+          </ul>
+          <h2 id="accred-heading" class="accred__lead">
+            Capella University is accredited by the Higher Learning Commission.
+          </h2>
+          <p class="accred__sub">
+            Accreditation and recognitions provide the assurance we meet standards for quality of
+            faculty, curriculum, learner services, and fiscal stability.
+          </p>
+          <p class="accred__link"><a href="#">See all of Capella&rsquo;s accreditations</a></p>
+          <p class="accred__fine">
+            *The baccalaureate degree program in nursing, master&rsquo;s degree program in nursing,
+            Doctor of Nursing Practice program and post-graduate APRN certificate program at
+            Capella University is accredited by the Commission on Collegiate Nursing Education
+            (<a href="http://www.ccneaccreditation.org">http://www.ccneaccreditation.org</a>).
+          </p>
+          <p class="accred__fine">
+            Capella University&rsquo;s Bachelor of Social Work and Master of Social Work programs are
+            accredited by the Council on Social Work Education&rsquo;s Board on Accreditation. For
+            more information about social work accreditation, visit:
+            <a href="https://www.cswe.org/accreditation">https://www.cswe.org/accreditation</a>.
+          </p>
+        </div>
+      </section>
     </main>
+
+    <!-- 6 ── Mobile-only fixed action bar -------------------------------
+         Pinned to the bottom of the viewport below 769px, exactly as on the
+         live site. The `theme-color` meta in <head> tints iOS Safari's toolbar
+         the same red so the bar and the browser chrome read as one block.
+         This is the surface the bottom sheet is expected to open from. -->
+    <div class="action-bar" aria-label="Quick actions">
+      <a href="#" class="action-bar__btn">Apply now</a>
+      <a href="#" class="action-bar__btn">Request info</a>
+    </div>
 
     <footer class="footer">
       <div class="footer__inner page-container">

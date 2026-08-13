@@ -20,10 +20,31 @@
   --color-program-hover-eyebrow: #767676;
   --color-program-hover-name: #505050;
 
-  /* Figma display: Acumin Pro Extra Condensed (maps to Acumin VF styles in dev mode) */
-  --font-display: 'acumin-pro-extra-condensed', sans-serif;
+  /* Sampled off the LIVE capella.edu, 2026-08-12 — see DESIGN.md. The two card
+     colours are close to but NOT the same as --color-boulder-50 / --color-stat-blue
+     above, which came from the dark-theme prototype. Use these for live-matching
+     work and leave the originals alone so the prototype's own sections still read
+     correctly if any get ported over. */
+  --color-card-grey: #f0f0ef; /* FlexPath / GuidedPath cards */
+  --color-card-blue: #a9c5c9; /* popular-programme cards */
+  --color-red-border: #b62025; /* the 1px border on the red Apply button */
+
+  /* ⚠️ Display type is Acumin VARIABLE, not the static extra-condensed family.
+     capella.edu renders every display heading with
+     `font-variation-settings: "slnt" 0, "wdth" 50, "wght" 800` — the width axis
+     at 50 is what makes the headlines condensed. Setting only `font-weight: 800`
+     leaves wdth at 100 and the heading comes out far too wide. Always apply
+     --display-variation alongside this family (the `.display` class below does).
+     `acumin-variable` ships in the same Typekit kit as the static faces. */
+  --font-display: 'acumin-variable', 'acumin-pro-extra-condensed', sans-serif;
+  --display-variation: 'slnt' 0, 'wdth' 50, 'wght' 800;
   --font-acumin-pro: 'acumin-pro', sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Live display sizes: h1 72px desktop / 40px mobile, h2 48px, line-height 0.9 */
+  --text-h1-live: 4.5rem; /* 72px */
+  --text-h1-live-mobile: 2.5rem; /* 40px */
+  --leading-display: 0.9;
 
   --weight-display-black: 800;
   --weight-display-semibold: 600;
