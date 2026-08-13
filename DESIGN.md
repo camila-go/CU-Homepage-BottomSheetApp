@@ -119,9 +119,6 @@ has a non-zero bounding box, or hit-test with `elementFromPoint`.
    six white tiles in a 2-column grid: Finish my degree, Get help with financial
    aid, Learn more about admissions, Find out more about scholarships, Apply,
    Explore FlexPath.
-5. **Accreditation** — white band. Four accreditor logos (ACBSP, CACREP, CCNE,
-   CSWE), the Higher Learning Commission line, a red "See all of Capella's
-   accreditations" link, and two small-print paragraphs.
 5. **Accreditation** — white band. Four accreditor logos rendered at **215px wide**
    each, the Higher Learning Commission line, a red "See all of Capella's
    accreditations" link, and two italic small-print paragraphs.
