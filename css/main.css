@@ -274,7 +274,15 @@
   color: var(--color-neutral-100);
 }
 
+/* Live page-level override: `.bg-parsys__color-wrapper … a { color:#fff;
+   font-weight:400 }` — white, regular weight, no underline. */
 .stats__source a {
+  color: var(--color-white);
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.stats__source a:hover {
   text-decoration: underline;
 }
 
@@ -389,19 +397,30 @@
   list-style: none;
 }
 
-/* `white-fill-btn` on the live site. ⚠️ Two things I had wrong: the label is RED
-   at rest (not dark), and the icon is filtered red to match. */
+/* ⚠️ These tiles are `white-fill-btn`, but capella.edu ships a PAGE-LEVEL inline
+   <style> block that overrides the theme's version of that class with
+   !important, and the page-level rules are what you actually see:
+     .quick-links .white-fill-btn        { border:0 !important; color:#212322 !important }
+     .quick-links .white-fill-btn:hover  { background-color:#212322; color:#fff !important }
+     .quick-links .white-fill-btn .iconImage       { filter:none !important; transition:all .2s ease-in-out }
+     .quick-links .white-fill-btn:hover .iconImage { filter:invert(1) !important }
+   So: DARK label on white at rest (not red), and the hover fill is NEAR-BLACK
+   (not red). I originally took the theme's generic .white-fill-btn declarations
+   at face value — red label, red hover fill — which is wrong on this page.
+   Lesson: check the computed value on the live element, and read the inline
+   <style> blocks, not just the linked stylesheets. */
 .move-tile {
   display: flex;
   align-items: center;
   gap: 12px;
   min-height: 54px;
   height: 100%;
-  padding: 12px 16px;
-  border: 4px solid transparent;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 4px;
   background: var(--color-white);
-  color: var(--color-uni-red);
-  font-size: 0.9375rem;
+  color: var(--color-uni-black);
+  font-size: 0.9375rem; /* 15px */
   font-weight: 700;
   box-shadow: var(--shadow-btn);
   transition:
@@ -410,35 +429,30 @@
     box-shadow var(--duration-fast) ease;
 }
 
+/* Dark at rest — the icons are already the _UniBlack artwork, so no filter. */
 .move-tile__icon {
   flex-shrink: 0;
   width: 23px;
   height: 23px;
-  filter: var(--filter-icon-red);
-  transition: filter var(--duration-fast) ease;
+  transition: filter 0.2s ease-in-out;
 }
 
-/* Hover inverts fully: red fill, white label, white icon. */
 .move-tile:hover {
-  background: var(--color-uni-red);
+  background: var(--color-uni-black);
   color: var(--color-white);
   box-shadow: var(--shadow-btn-hover);
 }
 
-.move-tile:active {
-  background: var(--color-red-hover);
-  color: var(--color-white);
-  box-shadow: var(--shadow-btn-active);
+.move-tile:hover .move-tile__icon {
+  filter: invert(1);
 }
 
-.move-tile:hover .move-tile__icon,
-.move-tile:active .move-tile__icon {
-  filter: var(--filter-icon-white);
-}
-
+/* No :active override — the live page only styles :hover here, and :hover still
+   applies while the tile is pressed, so it stays dark rather than flashing the
+   theme's leftover red. */
 .move-tile:focus-visible {
-  border-color: var(--focus-ring-grey);
-  outline: none;
+  outline: 2px solid var(--color-uni-black);
+  outline-offset: 2px;
 }
 
 /* 5 ── Accreditation --------------------------------------------------- */

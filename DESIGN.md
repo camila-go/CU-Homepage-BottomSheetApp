@@ -144,7 +144,7 @@ not eyeballed. **The site's root font-size is 15px**, so its rem values convert 
 | Apply now | `primary-fill-btn` | `#c10016`, shadow `0 5px 20px rgba(0,0,0,.1)` | **`#74000d`**, shadow `…,.2` | active shadow `…,.25`; focus 4px `#e68c96` |
 | Hero chips | `primary-fill-btn` | `#c10016`, radius 7.5px | `#74000d` | as above |
 | Popular-programme card | `secondary-fill-btn` | `#a9c5c9`, `#212322` text | **`#5f777a`, white text, icon inverted white** | focus 4px `#94b7bb` |
-| Make-your-move tile | `white-fill-btn` | white, **`#c10016` text**, red icon | **`#c10016` fill, white text, white icon** | active `#74000d`; focus 4px `#d0d1d2` |
+| Make-your-move tile | `white-fill-btn` **+ page-level override** | white, **`#212322` text**, dark icon, **4px radius**, padding 10px 20px, no border | **`#212322` fill, white text, icon `invert(1)`** | no `:active` defined |
 | FlexPath/GuidedPath link | `.image-text-cta__link` | grey card, red text | **red fill `#c10016`, white text** — not an underline | — |
 | Megamenu level row | `.nav-link-heading.level-1` | dark, white text | **full light treatment**: `#f5f5f5`, `#212322` text, red left edge, bold, red chevron | same as hover |
 | Megamenu areas row | `.dropdown-menu.level1-dd .nav-link` | `#f5f5f5`, dark text | **white fill, `#111` text** | — |
@@ -154,6 +154,31 @@ not eyeballed. **The site's root font-size is 15px**, so its rem values convert 
 The site recolours its black icon SVGs with filters rather than shipping
 variants; both are copied verbatim into `tokens.css` as `--filter-icon-white`
 and `--filter-icon-red`.
+
+### ⚠️ The linked stylesheets are not the whole story
+
+capella.edu ships a **page-level inline `<style>` block** (the 3rd `<style>` in
+`<head>`, ~1.5 KB) that overrides the theme with `!important`. Reading only the
+linked CSS gives the wrong answer for anything it touches. What it changes:
+
+```css
+.quick-links .white-fill-btn        { border:0 !important; color:#212322 !important }
+.quick-links .white-fill-btn:hover  { background-color:#212322; color:#fff !important }
+.quick-links .white-fill-btn .iconImage       { filter:none !important; transition:all .2s ease-in-out }
+.quick-links .white-fill-btn:hover .iconImage { filter:invert(1) !important }
+.facts-number, .facts-text          { color:#fff !important }
+.quick-links__title span            { color:#fff !important }
+.bg-parsys__color-wrapper .custom-limited-vc-rte a { color:#fff; font-weight:400 }
+@media (max-width:991px) { .hero-basic .hb__bg-img-inline > div { background:#fff !important } }
+```
+
+Because of this the Make-your-move tiles are **dark-on-white with a near-black
+hover**, not the red-on-white / red-hover that the theme's generic
+`.white-fill-btn` describes. I got this wrong by trusting the theme class alone.
+
+**Always confirm against `getComputedStyle` on the live element** before
+encoding a state. The theme class tells you which component it is; only the
+computed value tells you what it actually looks like on this page.
 
 ### Verifying hover states in this environment
 
