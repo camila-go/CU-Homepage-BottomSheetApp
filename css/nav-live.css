@@ -73,10 +73,25 @@
   justify-content: flex-end;
 }
 
-.utility-bar__cta:hover,
+/* ⚠️ This is `white-outline-btn` on the live site and it does NOT invert to a
+   white fill with dark text — it only washes to 10% white and keeps white text.
+   Live: `:hover { background-color: rgba(255,255,255,.1) }`,
+         `:active { rgba(255,255,255,.2) }`, `:focus { outline: 2px solid #fff }`. */
+.utility-bar__cta:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+}
+
+.utility-bar__cta:active {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+}
+
 .utility-bar__cta:focus-visible {
-  background: var(--color-white);
-  color: var(--color-uni-black);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
 }
 
 /* The live bar shows the full label at every width. */
@@ -143,10 +158,15 @@
   font-weight: 400;
 }
 
+/* ⚠️ The underline is #b62025, NOT the #c10016 rest red. Live rule:
+   `.nav-link:hover .brand-underline { border-bottom: .2rem solid #b62025 }`
+   — .2rem at the site's 15px root is 3px, not 4px. */
 .main-nav__item > a:hover,
 .main-nav__item > a[aria-expanded='true'] {
   background: none;
-  border-bottom-color: var(--color-uni-red);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--color-red-border);
+  text-decoration: none;
 }
 
 .main-nav__item > a:active {
@@ -162,7 +182,8 @@
    would read as a filled black lozenge. Use the same red underline instead. */
 .main-nav__item > a[aria-current] {
   background: none;
-  border-bottom-color: var(--color-uni-red);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--color-red-border);
 }
 
 .main-nav__links {
@@ -186,10 +207,29 @@
   font-weight: 700;
 }
 
-.main-nav__apply:hover,
-.main-nav__apply:focus-visible {
-  background: var(--color-red-border);
+/* `primary-fill-btn` on the live site: rest carries a soft drop shadow, hover
+   deepens the fill to #74000d (NOT #b62025) and the shadow with it. */
+.main-nav__apply {
+  box-shadow: var(--shadow-btn);
+}
+
+.main-nav__apply:hover {
+  background: var(--color-red-hover);
   color: var(--color-white);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+.main-nav__apply:active {
+  background: var(--color-red-hover);
+  box-shadow: var(--shadow-btn-active);
+}
+
+.main-nav__apply:focus-visible {
+  background: var(--color-uni-red);
+  color: var(--color-white);
+  outline: 4px solid var(--focus-ring-red);
+  outline-offset: 0;
+  box-shadow: var(--shadow-btn);
 }
 
 /* ---- Megamenus: dark panel, LIGHT columns ------------------------------
@@ -231,10 +271,24 @@
   color: var(--color-uni-black);
 }
 
-/* Hover on the dark levels rail stays a subtle white wash — going straight to
-   the full light fill would make every row look selected. */
+/* ⚠️ Hovering a level row gets the SAME full light treatment as the active row —
+   light fill, dark text, red left edge, bold, red chevron. I originally made this
+   a subtle white wash on the theory that a full fill would read as "selected";
+   the live theme disagrees:
+     .nav-link-heading.level-1:hover {
+       font-family: Inter-Bold; color: #212322;
+       border-left-color: #C10016; background-color: #f5f5f5 }
+     .nav-link-heading.level-1:hover .icon-caret-right { color: #C10016 } */
 .megamenu__level:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f5f5f5;
+  color: var(--color-uni-black);
+  border-left-color: var(--color-uni-red);
+  font-weight: 700;
+}
+
+.megamenu__level:hover .megamenu__chev,
+.megamenu__level.is-active .megamenu__chev {
+  color: var(--color-uni-red);
 }
 
 /* Headings and chevrons sit on the light columns now, so they must be dark. */
@@ -247,12 +301,15 @@
   color: var(--color-uni-black);
 }
 
-/* Row highlights inside the light columns: darken slightly instead of stepping
-   to the next dark surface. */
+/* Rows in the light columns go to a WHITE fill with near-black text, per
+   `.dropdown-menu.level1-dd .nav-link:hover { background-color:#FFF; color:#111 }`
+   — not a translucent darkening. */
 .megamenu__col--areas .megamenu__area-list a:hover,
 .megamenu__col--areas .megamenu__area-list a[aria-current],
 .megamenu__col--programs .megamenu__area-list a:hover {
-  background: rgba(33, 35, 34, 0.07);
+  background: var(--color-white);
+  color: #111;
+  text-decoration: none;
 }
 
 .megamenu__col--areas .megamenu__area-list a:focus-visible,
@@ -260,11 +317,26 @@
   outline: 2px solid var(--color-uni-black);
 }
 
-/* Grouped-list menus (Experience / Financing / Admissions) — dark panel, light
-   hover rows, matching the Degrees ramp. */
+/* Grouped-list menus (Experience / Financing / Admissions) — dark panel, so the
+   live rule that applies is the generic
+   `.navbar-inverse .dropdown-menu .nav-link:hover { color:#b62025 }` plus
+   `text-decoration: underline`. On a dark panel #b62025 is close to unreadable,
+   so this keeps the light row wash for legibility and only adds the underline.
+   ⚠️ Deliberate deviation — these three menus could not be sampled live (they
+   are Angular-rendered and never paint on a synthetic click). */
 .megamenu--list .megamenu__area-list a:hover,
 .megamenu--list .megamenu__group-title a:hover {
   background: rgba(255, 255, 255, 0.1);
+  text-decoration: underline;
+}
+
+/* The megamenu's terminal CTA has its OWN hover red — #8a0010, not #74000d. */
+.megamenu__cta:hover,
+.megamenu__cta:focus-visible {
+  background: var(--color-red-cta-hover);
+  color: var(--color-white);
+  text-decoration: none;
+  box-shadow: none;
 }
 
 /* ---- Hamburger and mobile panel on a white bar ------------------------ */

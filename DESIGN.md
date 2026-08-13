@@ -121,6 +121,58 @@ has a non-zero bounding box, or hit-test with `elementFromPoint`.
    STUDY, ABOUT US, INFORMATION FOR, LEGAL. Below: the Strategic Education
    ownership line and the partner carousel with prev/next arrows.
 
+## Interaction states
+
+Read out of the live theme stylesheet
+(`/etc.clientlibs/visitorcenter/clientlibs/visitorcenter-themes/vcrefresh.min.css`),
+not eyeballed. **The site's root font-size is 15px**, so its rem values convert as
+`0.1333rem=2px, 0.2rem=3px, 0.2667rem=4px, 0.3333rem=5px, 1.3333rem=20px`.
+
+⚠️ **capella.edu uses four different reds and they are not interchangeable:**
+
+| Red | Used for |
+| --- | --- |
+| `#c10016` | rest fill on filled buttons |
+| `#b62025` | the nav hover/active underline; darker link text |
+| `#74000d` | hover/active fill on filled buttons |
+| `#8a0010` | hover on the megamenu "Find your program" CTA **only** |
+
+| Control | Live class | Rest | Hover | Active / Focus |
+| --- | --- | --- | --- | --- |
+| Nav link | `.nav-link .brand-underline` | 4px transparent bottom border | **3px `#b62025`** bottom border, no bg change | same underline |
+| Request information | `white-outline-btn` | transparent, 2px white border | **`rgba(255,255,255,.1)`**, text stays white | active `rgba(255,255,255,.2)`; focus 2px white outline |
+| Apply now | `primary-fill-btn` | `#c10016`, shadow `0 5px 20px rgba(0,0,0,.1)` | **`#74000d`**, shadow `…,.2` | active shadow `…,.25`; focus 4px `#e68c96` |
+| Hero chips | `primary-fill-btn` | `#c10016`, radius 7.5px | `#74000d` | as above |
+| Popular-programme card | `secondary-fill-btn` | `#a9c5c9`, `#212322` text | **`#5f777a`, white text, icon inverted white** | focus 4px `#94b7bb` |
+| Make-your-move tile | `white-fill-btn` | white, **`#c10016` text**, red icon | **`#c10016` fill, white text, white icon** | active `#74000d`; focus 4px `#d0d1d2` |
+| FlexPath/GuidedPath link | `.image-text-cta__link` | grey card, red text | **red fill `#c10016`, white text** — not an underline | — |
+| Megamenu level row | `.nav-link-heading.level-1` | dark, white text | **full light treatment**: `#f5f5f5`, `#212322` text, red left edge, bold, red chevron | same as hover |
+| Megamenu areas row | `.dropdown-menu.level1-dd .nav-link` | `#f5f5f5`, dark text | **white fill, `#111` text** | — |
+| Find your program CTA | `.explore-btn` | `#c10016` | **`#8a0010`**, no shadow | — |
+| Footer link | `footer .nav-link` | 14px/27px, `#cdcdcd`, opacity .91 | **underline only — colour does NOT change** | active `#c8c0b6` |
+
+The site recolours its black icon SVGs with filters rather than shipping
+variants; both are copied verbatim into `tokens.css` as `--filter-icon-white`
+and `--filter-icon-red`.
+
+### Verifying hover states in this environment
+
+Real hover cannot be simulated here — the Browser pane dispatches no
+`mousemove`, so `:hover` never engages. Two things that do work:
+
+1. Clone every `:hover` rule onto a `.force-hover` class
+   (`selectorText.replace(/:hover/g,'.force-hover')` + `insertRule`), then add
+   the class and read computed styles.
+2. **Inject `* { transition: none !important }` first.** While the pane is
+   hidden, `document.visibilityState === 'hidden'` freezes transitions at their
+   START value, so every transitioned property reports its rest colour and looks
+   like a failing test. This wasted a real debugging cycle.
+
+Also: in current Chrome `CSSStyleRule` exposes an empty `cssRules` list (CSS
+nesting), so a stylesheet walker written as `if (r.cssRules) { recurse; continue }`
+silently skips **every** style rule. Test for `CSSMediaRule`/`CSSSupportsRule`
+explicitly instead.
+
 ## Megamenu (Degrees & Programs)
 
 Same "a row highlights in the colour of the column it opens" logic as the

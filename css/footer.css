@@ -91,15 +91,28 @@
   gap: 8px;
 }
 
+/* Live spec (measured 2026-08-12):
+     footer .nav-link         { font-size:14px; line-height:27px; opacity:.91; color:#CDCDCD }
+     footer .nav-link:hover   { text-decoration:underline }   ← colour does NOT change
+     footer .nav-link:active  { color:#c8c0b6 } */
 .footer__column a {
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--color-neutral-100);
+  font-size: 0.875rem; /* 14px */
+  line-height: 27px;
+  opacity: 0.91;
+  color: #cdcdcd;
   transition: color 0.2s ease;
 }
 
-.footer__column a:hover {
-  color: var(--color-white);
+/* ⚠️ Underline only. The prototype lightened these to white on hover; the live
+   site keeps #cdcdcd and just underlines. */
+.footer__column a:hover,
+.footer__column a:focus-visible {
+  color: #cdcdcd;
+  text-decoration: underline;
+}
+
+.footer__column a:active {
+  color: #c8c0b6;
 }
 
 .footer__bottom {
