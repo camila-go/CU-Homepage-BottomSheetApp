@@ -458,10 +458,20 @@
 
   /* ⚠️ The bar is 41px on the live site, so the hamburger cannot be the
      prototype's 44px square or it sets the bar's height instead. Live measures
-     45 × 40. */
-  .main-nav__menu-btn {
+     45 × 40 with a 3.75px radius and NO fill in any state — including when open,
+     where the prototype puts a grey circle behind the X. */
+  .main-nav__menu-btn,
+  .main-nav__menu-btn:hover,
+  .main-nav__menu-btn[aria-expanded='true'] {
     width: 45px;
     height: 40px;
+    border-radius: 3.75px;
+    background: none;
+    border-color: transparent;
+  }
+
+  .main-nav__menu-btn:active {
+    background: rgba(33, 35, 34, 0.08);
   }
 
   /* The megamenus are hidden once the mobile view stack takes over, so the
@@ -524,5 +534,92 @@
     top: 72px;
     padding-block: 0;
     background: var(--color-white);
+  }
+}
+
+/* ---- Mobile nav: WHITE, not the prototype's dark surface ----------------
+ *
+ * ⚠️ The whole mobile menu is light on capella.edu. The prototype's version is
+ * dark (#212322 panel, white rows, grey chevrons), which is the single biggest
+ * reason it "looks different". Measured on the live site at 375:
+ *
+ *   panel        background #fff, border-top 5px #c10016
+ *                (note: the desktop megamenus carry the same
+ *                `border-top border-brand-red` classes but compute to 0 there —
+ *                the 5px rule is only real at mobile)
+ *   root rows    Inter BOLD 16px #212322, 71px tall (20px block padding),
+ *                1px #d9d9d6 rule, x=15
+ *   deeper rows  Inter REGULAR 16px, 55px tall (15px block padding)
+ *   chevron      #c10016, right-aligned
+ *   « Back       #c10016, 12px, regular weight
+ *   heading      #212322 regular 16px with a 1px #d9d9d6 rule under it
+ *                (shown from level 3 down; level 2 has none)
+ *   footer       red Apply now | Request info — already correct
+ *
+ * The view-stack STRUCTURE was already right (slide-in panels over the parent,
+ * "« Back" to pop, headings from level 3) — only the skin was wrong.
+ */
+@media (max-width: 991px) {
+  .main-nav__mobile-panel {
+    background: var(--color-white);
+    border-top: 5px solid var(--color-uni-red);
+  }
+
+  /* ⚠️ The 15px gutter lives on the VIEW, not the row. Live insets the row
+     element itself (x=15, 345 wide) so its bottom rule stops short of the panel
+     edges — with the padding on the row instead, the rule runs edge to edge. */
+  .mobile-menu__view {
+    background: var(--color-white);
+    padding: 0 15px 24px;
+  }
+
+  .mobile-menu__row {
+    min-height: 55px;
+    padding: 15px 0;
+    border-bottom: 1px solid #d9d9d6;
+    color: var(--color-uni-black);
+    font-size: var(--text-body);
+    font-weight: 400;
+  }
+
+  /* Only the four top-level rows are bold and taller (71px vs 55px).
+     ⚠️ `background: none` is required: nav.css gives these a #262626 fill
+     (`--menu-row-mobile`) for the prototype's dark panel. On the white panel that
+     leaves dark blocks with dark text on them — invisible rows. */
+  .mobile-menu__row--strong {
+    min-height: 71px;
+    padding-block: 20px;
+    font-weight: 700;
+    background: none;
+  }
+
+  .mobile-menu__row:hover,
+  .mobile-menu__row:active {
+    background: #f5f5f5;
+    transform: none;
+  }
+
+  .mobile-menu__chev {
+    color: var(--color-uni-red);
+  }
+
+  .mobile-menu__back {
+    padding: 12px 0 4px;
+    color: var(--color-uni-red);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .mobile-menu__heading {
+    padding: 4px 0 15px;
+    border-bottom: 1px solid #d9d9d6;
+    color: var(--color-uni-black);
+    font-size: var(--text-body);
+    font-weight: 400;
+  }
+
+  .mobile-menu__group {
+    padding: 20px 0 8px;
+    color: var(--color-uni-black);
   }
 }

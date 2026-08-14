@@ -402,6 +402,34 @@ So:
 nav back for that band. The hamburger must also be **45 × 40**, not the
 prototype's 44 × 44, or it sets the bar's height to 44 instead of 41.
 
+## Mobile nav
+
+⚠️ **The mobile menu is WHITE on capella.edu**, not the dark surface the prototype
+ships. That single fact is most of why it read as a different component. The
+view-stack *structure* was already right — slide-in panels over the parent,
+"« Back" to pop, a parent heading from level 3 down — only the skin was wrong.
+
+| Part | Value |
+| --- | --- |
+| Panel | `#fff`, **`border-top: 5px solid #c10016`** |
+| Root rows | Inter **Bold** 16px `#212322`, **71px** tall (20px block padding) |
+| Deeper rows | Inter **Regular** 16px, **55px** tall (15px block padding) |
+| Row rule | `1px solid #d9d9d6` |
+| Gutter | **15px, on the VIEW** — the row element is inset so its rule stops short of the panel edges |
+| Chevron | **`#c10016`**, right-aligned |
+| « Back | `#c10016`, **12px**, regular weight |
+| Heading | `#212322` regular 16px with a `1px #d9d9d6` rule beneath; shown from level 3 (level 2 has none) |
+| Close X | 45 × 40, 3.75px radius, **no fill in any state** |
+| Footer | red Apply now \| Request info |
+
+⚠️ That 5px red top border is real **only at mobile** — the desktop megamenus
+carry the same `border-top border-brand-red` classes but compute to `0`.
+
+⚠️ Two prototype rules must be explicitly cleared or the reskin looks broken:
+`.mobile-menu__row--strong` has a `#262626` fill (`--menu-row-mobile`), which on
+a white panel leaves dark blocks with dark text on them; and the open hamburger
+gets a grey circle behind the X.
+
 ## Mobile-only: fixed bottom action bar
 
 A red `#c10016` bar pinned to the bottom of the viewport, **50px tall**, split in
