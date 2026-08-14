@@ -693,6 +693,28 @@ pixel-identical and keeps the name stable whether the label is up or down.
 theme recolours `.placeHolder` under `.validation-failure`; only the input's
 border and text turn red.
 
+### The "Log In" link (step 1)
+
+The only anchor anywhere in the sheet: `Already started an application? Log In`.
+
+| State | Value |
+| --- | --- |
+| Rest | inherits the fine print's `#696f74`, **underlined** |
+| Hover | `#c10016` (brand red), 6.40:1 on white |
+| Focus | same red, plus a 2px red ring at 2px offset |
+
+⚠️ **Requested divergence from live.** The live application's link hover is
+`#006b99` — `.guideContainerWrapperNode a:hover { color: #006b99;
+text-decoration: underline }`, the AEM theme's blue. Red was asked for
+deliberately: it puts the one interactive word in the fine print into the Capella
+brand colour instead of an Adobe default.
+
+⚠️ The underline is on the **rest** state, not only hover. `base.css` sets
+`a { color: inherit; text-decoration: none }`, so this link was rendering
+identically to the grey copy around it with nothing marking it as a link. A
+hover-only treatment cannot fix that — this is a bottom sheet, so most of its life
+is on touch, where hover never fires at all.
+
 ### No step counter
 
 ⚠️ There is no "Step n of 10" line. The live application doesn't show one, and an
