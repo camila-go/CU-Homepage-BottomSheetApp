@@ -920,6 +920,14 @@
     background: var(--color-red-border);
   }
 
+  /* ⚠️ This was the one interactive component on the page with no focus style at
+     all (WCAG 2.4.7). Inset rather than outset: the bar is flush to the viewport
+     edges, so an outward ring would be clipped on three sides. */
+  .action-bar__btn:focus-visible {
+    outline: 3px solid var(--color-white);
+    outline-offset: -5px;
+  }
+
   /* ⚠️ Do NOT lift the mobile nav panel to clear this bar. The panel carries its
      own red "Apply now | Request info" footer, so ending it above the action bar
      renders TWO identical red bars stacked. Left at `bottom: 0` (nav.css), the

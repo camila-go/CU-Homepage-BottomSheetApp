@@ -21,7 +21,7 @@ css/main.css        the six homepage bands + mobile action bar
 css/footer.css      footer columns, legal block, partner carousel
 js/nav.js           nav scroll state, megamenus, mobile view stack
 js/footer.js        partner carousel
-public/assets/      imagery (620 KB total)
+public/assets/      imagery (1.1 MB total)
 ```
 
 ⚠️ **Stylesheet order is `base → nav → nav-live → main → footer`.** `base` defines
@@ -121,5 +121,5 @@ npm install && npm run dev
 
 `<main>` ends with the accreditation band; the mobile-only fixed red action bar
 (`.action-bar`, "Apply now | Request info") is the surface the sheet is expected
-to open from. It's `position: fixed`, `z-index: 120`, 56px tall, and `<body>`
+to open from. It's `position: fixed`, `z-index: 120`, 50px tall, and `<body>`
 carries a matching `padding-bottom` so the footer clears it.

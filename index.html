@@ -39,6 +39,12 @@
     <script src="https://kit.fontawesome.com/f1bee60eab.js" crossorigin="anonymous"></script>
   </head>
   <body>
+    <!-- ⚠️ Bypass block (WCAG 2.4.1). The header carries four megamenu triggers and
+         the page has ~148 links in total, so without this a keyboard user tabs
+         through the entire nav before reaching the hero. Visually hidden until
+         focused, then it pins itself to the top-left. -->
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <div class="utility-bar">
       <div class="utility-bar__inner page-container">
         <a href="tel:1-866-679-9682" class="utility-bar__link">1-866-679-9682</a>
@@ -280,7 +286,7 @@
          Links are `#` — this is a prototype, so only the layout is real.
          The bottom sheet itself goes in §7 at the end.
          ============================================================ -->
-    <main>
+    <main id="main-content">
       <!-- 1 ── Hero ------------------------------------------------ -->
       <section class="hero" aria-labelledby="hero-heading">
         <div class="hero__inner">
@@ -544,7 +550,9 @@
          live site. The `theme-color` meta in <head> tints iOS Safari's toolbar
          the same red so the bar and the browser chrome read as one block.
          This is the surface the bottom sheet is expected to open from. -->
-    <div class="action-bar" aria-label="Quick actions">
+    <!-- ⚠️ `role="group"` is load-bearing: an `aria-label` on a bare <div> is inert,
+         so the bar had a label nothing could announce. -->
+    <div class="action-bar" role="group" aria-label="Quick actions">
       <a href="#" class="action-bar__btn" data-sheet-open>Apply now</a>
       <a href="#" class="action-bar__btn">Request info</a>
     </div>
