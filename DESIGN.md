@@ -498,6 +498,51 @@ the entered SSN matches an existing Capella account, and it *terminates* the flo
 (it links to log in). Routing through it by default dead-ends the common path
 before email and password, so the default path is **5 → 7**.
 
+### What opens the sheet
+
+Five affordances on the page lead to the application, and all five open the sheet.
+Each is marked `data-sheet-open` in the markup, and sheet.js binds them with a
+single **delegated** listener on `document`.
+
+| Trigger | Where | Visible at |
+| --- | --- | --- |
+| `.megamenu__apply` | "Apply Now" inside the Degrees & Programs megamenu | ≥992 |
+| `.main-nav__apply` | header button | ≥992 |
+| `.move-tile` | **"Apply"** in the Make your move band | all widths |
+| `.action-bar__btn` | mobile fixed action bar | ≤768 |
+| `.mobile-menu__footer > a` | mobile nav panel footer — **built by nav.js at runtime** | ≤991 |
+
+⚠️ This started as a text match, `/^apply now$/i` over every `a` and `button`.
+Two things were wrong with it:
+
+- It silently skipped the **"Apply"** tile in the Make your move band, whose label
+  is just "Apply". On the live site that tile links to `apply.capella.edu` exactly
+  like the other four, so it belongs here. No amount of care with a text pattern
+  makes the set auditable; an attribute does — `[data-sheet-open]` can be counted,
+  and anything apply-labelled *without* it can be listed.
+- A one-shot `querySelectorAll` at `DOMContentLoaded` caught the mobile menu's
+  link only **by luck**: nav.js builds that panel in a `DOMContentLoaded` handler
+  that happens to be registered first, because its module tag comes earlier in the
+  document. Delegation removes the ordering dependency entirely.
+
+⚠️ Returning focus on close is not simply `opener.focus()`. Three of the five
+triggers sit in containers that are closed or collapsed by the time the sheet is
+dismissed. Worse, the megamenu's Apply is *still* open and focusable at the moment
+the sheet closes, so `focus()` **succeeds** — and then the panel collapses, the
+focused element becomes `display: none`, and the browser drops focus to `<body>`.
+Checking `offsetParent` first doesn't help either: `focus()` is a silent no-op on a
+`visibility: hidden` element that still reports one. So sheet.js:
+
+1. redirects a trigger inside a disclosure to the control that **owns** the panel
+   (the megamenu's own trigger, or the hamburger) — the standard pattern, and the
+   only target that stays put;
+2. walks a candidate list and **verifies** `document.activeElement` after each
+   `focus()` rather than assuming it took;
+3. prefers header controls over a blind sweep of triggers, because falling through
+   to the first trigger anywhere lands on the "Apply" tile down in band 5 and yanks
+   the viewport to it;
+4. blurs as a last resort, so focus is never left inside the hidden dialog.
+
 ### Reviewing every step
 
 The conditional steps aren't reachable by clicking through. Rather than adding

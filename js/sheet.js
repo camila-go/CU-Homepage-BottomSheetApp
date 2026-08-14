@@ -306,8 +306,50 @@ function initSheet() {
     };
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) done();
     else sheet.addEventListener('transitionend', done, { once: true });
-    // Return focus to whatever opened the sheet.
-    if (opener) opener.focus();
+
+    /* Return focus to whatever opened the sheet, with fallbacks.
+     *
+     * ⚠️ `opener.focus()` alone is not enough, and neither is checking whether the
+     * opener looks visible first. Three of the five triggers live in containers
+     * that are closed or collapsed by the time the sheet is dismissed — the
+     * megamenu, the mobile nav panel, and the mobile-only action bar — and
+     * `focus()` on an element that is `visibility: hidden` or inside a closed menu
+     * is a silent no-op *even though it still reports an `offsetParent`*. The
+     * result was focus stranded on an input inside the now-hidden dialog, with
+     * nothing to tab from.
+     *
+     * So: try each candidate and VERIFY it took. The header controls come before
+     * a blind sweep of triggers because they are on screen at their respective
+     * widths — falling straight through to the first trigger anywhere lands on the
+     * "Apply" tile down in band 5 and yanks the viewport to it.
+     */
+    /* ⚠️ A trigger that lives inside a disclosure is the wrong target even when it
+       accepts focus. The megamenu's Apply is still open and focusable at the moment
+       the sheet closes, so `focus()` succeeds — and then the panel collapses, the
+       focused element becomes `display: none`, and the browser silently drops focus
+       to <body>. Return to the control that OWNS the panel instead, which is both
+       the standard disclosure pattern and the only target that stays put. */
+    let preferred = opener;
+    const mega = opener && opener.closest('.megamenu');
+    if (mega) {
+      preferred =
+        mega.closest('.main-nav__item')?.querySelector('a[aria-expanded]') || null;
+    } else if (opener && opener.closest('#mobile-nav-panel')) {
+      preferred = document.querySelector('.main-nav__menu-btn');
+    }
+
+    const candidates = [
+      preferred,
+      ...document.querySelectorAll('.main-nav__menu-btn'),
+      ...document.querySelectorAll('.main-nav__apply'),
+      ...document.querySelectorAll('[data-sheet-open]'),
+    ].filter(Boolean);
+    for (const candidate of candidates) {
+      candidate.focus();
+      if (document.activeElement === candidate) break;
+    }
+    // Nothing accepted focus — at least don't leave it inside the hidden dialog.
+    if (sheet.contains(document.activeElement)) document.activeElement.blur();
   }
 
   nextBtn.addEventListener('click', () => {
@@ -362,17 +404,29 @@ function initSheet() {
     }
   });
 
-  // Every "Apply now" on the page opens the sheet instead of navigating.
-  const triggers = [...document.querySelectorAll('a, button')].filter((el) =>
-    /^apply now$/i.test((el.textContent || '').trim())
-  );
-  triggers.forEach((t) =>
-    t.addEventListener('click', (e) => {
-      e.preventDefault();
-      current = 1;
-      open(t);
-    })
-  );
+  /* Every apply affordance on the page opens the sheet instead of navigating.
+   *
+   * Keyed on an explicit `data-sheet-open` attribute, and delegated. ⚠️ Both
+   * details are fixes for real misses:
+   *
+   *   - Matching the label text against /^apply now$/i silently skipped the
+   *     "Apply" tile in the Make your move band, whose label is just "Apply".
+   *     On the live site that tile links to apply.capella.edu like every other
+   *     one, so it belongs here — but no amount of care with a text pattern
+   *     makes the set auditable. An attribute does.
+   *   - Binding with a one-shot querySelectorAll at DOMContentLoaded caught the
+   *     mobile menu's "Apply now" only by luck: nav.js builds that panel in a
+   *     DOMContentLoaded handler that happens to be registered first. Delegation
+   *     drops the ordering dependency, so a trigger built at any later point
+   *     still works.
+   */
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest?.('[data-sheet-open]');
+    if (!trigger) return;
+    e.preventDefault();
+    current = 1;
+    open(trigger);
+  });
 
   // Review hooks. "Validate every step is brought in" needs a way to reach the
   // CONDITIONAL steps (2, 4 and 6 are gated on record matches upstream), without

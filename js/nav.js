@@ -273,6 +273,10 @@ function initMobileMenuTree() {
     const a = document.createElement('a');
     a.href = '#';
     a.textContent = t;
+    // Apply opens the application sheet. sheet.js listens for this attribute via
+    // a delegated handler, so it works even though this link is built here at
+    // runtime rather than sitting in the markup.
+    if (t === 'Apply now') a.setAttribute('data-sheet-open', '');
     footer.appendChild(a);
   });
 

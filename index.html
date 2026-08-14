@@ -247,11 +247,11 @@
                       <li><a href="#">Sophia Admissions Pathway</a></li>
                     </ul>
                   </div>
-                  <a href="#" class="megamenu__apply">Apply Now</a>
+                  <a href="#" class="megamenu__apply" data-sheet-open>Apply Now</a>
               </div>
             </li>
           </ul>
-          <a href="#" class="btn btn--white btn--md main-nav__apply">Apply now</a>
+          <a href="#" class="btn btn--white btn--md main-nav__apply" data-sheet-open>Apply now</a>
           <button
             type="button"
             class="main-nav__menu-btn"
@@ -269,7 +269,7 @@
             <li><a href="#">Financing</a></li>
             <li><a href="#">Admissions</a></li>
           </ul>
-          <a href="#" class="btn btn--white btn--md main-nav__mobile-apply">Apply now</a>
+          <a href="#" class="btn btn--white btn--md main-nav__mobile-apply" data-sheet-open>Apply now</a>
         </div>
       </div>
     </header>
@@ -485,7 +485,9 @@
               </a>
             </li>
             <li>
-              <a href="#" class="move-tile">
+              <!-- ⚠️ Labelled just "Apply", but on the live site it links to
+                   apply.capella.edu like the rest, so it opens the sheet too. -->
+              <a href="#" class="move-tile" data-sheet-open>
                 <img src="/assets/icons/student.png" alt="" class="move-tile__icon" width="23" height="23" loading="lazy" decoding="async" />
                 Apply
               </a>
@@ -543,7 +545,7 @@
          the same red so the bar and the browser chrome read as one block.
          This is the surface the bottom sheet is expected to open from. -->
     <div class="action-bar" aria-label="Quick actions">
-      <a href="#" class="action-bar__btn">Apply now</a>
+      <a href="#" class="action-bar__btn" data-sheet-open>Apply now</a>
       <a href="#" class="action-bar__btn">Request info</a>
     </div>
 
