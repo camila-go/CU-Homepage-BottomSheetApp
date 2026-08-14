@@ -34,15 +34,74 @@ const NEXT_LABEL = {
   10: 'Ok, Got it!',
 };
 
-// Which fields each step requires. The docked action validates these before
-// advancing, mirroring the live wizard (whose Continue also refuses to move on).
-// The messages in the markup are the live application's own strings.
-const REQUIRED = {
-  1: ['app-first', 'app-last'],
-  3: ['app-dob'],
-  5: ['app-ssn'],
-  7: ['app-email'],
-  9: ['app-password'],
+/* Per-field rules, by step. The docked action validates these before advancing,
+ * mirroring the live wizard (whose Continue also refuses to move on).
+ *
+ * ⚠️ Presence alone is not enough: an earlier version only checked that a field
+ * was non-empty, so "13/45/99" passed as a date of birth, "12" passed as the last
+ * four SSN digits, and "abc" passed as a password. Each field carries its own
+ * `test` and its own message.
+ *
+ * The password rules are the six the live form lists verbatim.
+ */
+const PASSWORD_RULES = [
+  [(v) => v.length >= 8 && v.length <= 15, '8-15 characters'],
+  [(v) => /[A-Z]/.test(v), 'one uppercase letter'],
+  [(v) => /[a-z]/.test(v), 'one lowercase letter'],
+  [(v) => /\d/.test(v), 'one number'],
+  [(v) => /[^A-Za-z0-9]/.test(v), 'one special character'],
+];
+
+const FIELDS = {
+  1: [
+    { id: 'app-first', msg: 'Please enter your first name.' },
+    { id: 'app-last', msg: 'Please enter your last name.' },
+  ],
+  3: [
+    {
+      id: 'app-dob',
+      // Real calendar check, not just the shape: 02/31 must fail.
+      test: (v) => {
+        const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(v);
+        if (!m) return false;
+        const [, mm, dd, yyyy] = m.map(Number);
+        const d = new Date(yyyy, mm - 1, dd);
+        return (
+          d.getMonth() === mm - 1 &&
+          d.getDate() === dd &&
+          d.getFullYear() === yyyy &&
+          d < new Date()
+        );
+      },
+      msg: 'Please enter a valid date of birth as MM/DD/YYYY.',
+    },
+  ],
+  5: [
+    {
+      id: 'app-ssn',
+      test: (v) => /^\d{4}$/.test(v),
+      msg: 'Please enter the last 4 digits of your SSN.',
+      // The live wizard treats the checkbox as the alternative to the digits.
+      skipIf: (sheet) => sheet.querySelector('[data-no-ssn]')?.checked,
+    },
+  ],
+  7: [
+    {
+      id: 'app-email',
+      test: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v),
+      msg: 'Please enter a valid email address.',
+    },
+  ],
+  9: [
+    {
+      id: 'app-password',
+      test: (v) => PASSWORD_RULES.every(([fn]) => fn(v)),
+      msg: (v) => {
+        const missing = PASSWORD_RULES.filter(([fn]) => !fn(v)).map(([, label]) => label);
+        return `Your password still needs ${missing.join(', ')}.`;
+      },
+    },
+  ],
 };
 
 // The sheet header shows the Capella logo, so these titles are announced to
@@ -121,41 +180,60 @@ function initSheet() {
     fieldOf(input)?.classList.remove('is-invalid');
   }
 
-  function showError(input) {
+  function showError(input, message) {
     const err = sheet.querySelector('#' + input.id + '-error');
     input.setAttribute('aria-invalid', 'true');
-    if (err) input.setAttribute('aria-describedby', err.id);
+    if (err) {
+      // `aria-live` on the message means the text is announced when it changes,
+      // so a screen reader hears WHY the step didn't advance.
+      if (message) err.textContent = message;
+      input.setAttribute('aria-describedby', err.id);
+    }
     fieldOf(input)?.classList.add('is-invalid');
   }
 
-  /* Returns true when the current step is complete. The SSN step is satisfied
-     either by four digits or by the "I don't have Social Security Number"
-     checkbox — the live wizard treats the checkbox as the alternative. */
+  /* Runs a field's own rule. A field with no `test` is presence-only. */
+  function checkField(spec) {
+    const input = sheet.querySelector('#' + spec.id);
+    if (!input) return true;
+    if (spec.skipIf && spec.skipIf(sheet)) {
+      clearError(input);
+      return true;
+    }
+    const value = input.value.trim();
+    const ok = value !== '' && (!spec.test || spec.test(value));
+    if (ok) {
+      clearError(input);
+      return true;
+    }
+    showError(input, typeof spec.msg === 'function' ? spec.msg(value) : spec.msg);
+    return false;
+  }
+
+  // Returns true when every field on the step passes; focuses the first failure.
   function validateStep(n) {
-    const ids = REQUIRED[n] || [];
     let firstBad = null;
-    for (const id of ids) {
-      const input = sheet.querySelector('#' + id);
-      if (!input) continue;
-      if (id === 'app-ssn' && sheet.querySelector('[data-no-ssn]')?.checked) {
-        clearError(input);
-        continue;
-      }
-      if (!input.value.trim()) {
-        showError(input);
-        if (!firstBad) firstBad = input;
-      } else {
-        clearError(input);
+    for (const spec of FIELDS[n] || []) {
+      if (!checkField(spec)) {
+        if (!firstBad) firstBad = sheet.querySelector('#' + spec.id);
       }
     }
     if (firstBad) firstBad.focus();
     return !firstBad;
   }
 
-  // Clear a field's error as soon as the user starts fixing it.
+  // Re-check on input once a field is already in error, so the message clears the
+  // moment it becomes valid rather than only on the next Continue.
   sheet.querySelectorAll('.sheet__input').forEach((input) => {
     input.addEventListener('input', () => {
-      if (input.value.trim()) clearError(input);
+      if (input.getAttribute('aria-invalid') !== 'true') return;
+      const spec = (FIELDS[current] || []).find((f) => f.id === input.id);
+      if (!spec) {
+        if (input.value.trim()) clearError(input);
+        return;
+      }
+      const value = input.value.trim();
+      if (value !== '' && (!spec.test || spec.test(value))) clearError(input);
     });
   });
 

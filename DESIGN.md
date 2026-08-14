@@ -518,33 +518,54 @@ different component with its own field style.
 
 | State | Value |
 | --- | --- |
+| Label | **12px / weight 400 / `#666`** — small and quiet above a 16px value, not 15px bold |
 | Rest | `1px solid #b4b4b4`, **radius 5px**, `padding: 14px 16px`, 50px tall, 16px text |
 | Hover | border darkens to `#212322` |
 | Focus | **`outline: 1.5px solid #212322`** — the border does *not* change |
 | Error | **`border: 2px solid #e50000`**, label turns `#e50000` |
-| Error message | `#e50000`, **14px / weight 500** |
+| Error message | `#e50000`, **14px / 18px / weight 500**, led by a warning badge |
 | Readonly | `#f5f5f5` fill, `#4f565b` text |
 | Disabled | `#f5f5f5` fill, `#8e8e8e` text |
+| Checkbox | **26×26**, `appearance: none`, `1px #b4b4b4`, radius 4px; checked = `#c10016` fill + white tick |
 
-The error copy is the live application's own, pulled from the AEM form model's
-`mandatoryMessage` values — including `"Please enter Enter last 4 digits of SSN."`,
-whose doubled "Enter" is genuinely what the live form says.
+⚠️ The 2px error border replaces the 1px rest border rather than adding to it, so
+the field's height holds at 50px and the layout doesn't shift by 2px when a
+message appears.
 
-| Field | Message |
+⚠️ The live message leads with a Font Awesome warning glyph (19px, `#e50000`).
+It's drawn in CSS here (a 16px `#e50000` circle with a white `!`) so the error
+state doesn't silently lose its icon when the kit fails to load.
+
+⚠️ The default checkbox is ~13px and reads as a different design language from
+the 50px fields beside it, hence `appearance: none` and the 26×26 redraw.
+
+**Validation is rule-based, per field.** An earlier version checked presence only,
+which let `13/45/99` through as a date of birth, `12` as the last four SSN digits
+and `abc` as a password:
+
+| Field | Rule |
 | --- | --- |
-| First Name | Please enter first name. |
-| Last Name | Please enter last name. |
-| Date of birth | Please enter date of birth! |
-| SSN | Please enter Enter last 4 digits of SSN. |
-| Email | Please enter email address. |
-| Password | Please enter a password. |
+| First / Last Name | non-empty |
+| Date of birth | `MM/DD/YYYY` **and a real calendar date in the past** — `02/31/1990` fails |
+| SSN | exactly 4 digits — or the "no SSN" checkbox is ticked |
+| Email | `local@domain.tld` |
+| Password | all five live rules: 8–15 chars, upper, lower, number, special |
 
-Behaviour: the docked action refuses to advance while a required field is empty,
-flags every empty field at once, and moves focus to the first one. Errors clear on
-input, not on blur. `aria-invalid` drives the styling so the visual and accessible
-states cannot drift, and `aria-describedby` links the field to its message.
-Ticking "I don't have Social Security Number" disables the SSN field, clears its
-error and satisfies the step — the live wizard's alternative path.
+⚠️ The messages are **ours, not the live form's**. The AEM model's
+`mandatoryMessage` strings are presence-only ("Please enter date of birth!",
+and literally "Please enter Enter last 4 digits of SSN." with the doubled
+"Enter"), so they can't describe *why* a malformed value was rejected. The
+password message names only the unmet rules — "Your password still needs one
+uppercase letter, one special character." — which no fixed string can do.
+
+Behaviour: the docked action refuses to advance while any rule fails, flags every
+failing field at once, and moves focus to the first one. A field already in error
+re-runs its own rule on every keystroke, so the message clears the moment the
+value becomes valid rather than on the next Continue. `aria-invalid` drives the
+styling so the visual and accessible states cannot drift, and `aria-describedby`
+links the field to its message. Ticking "I don't have Social Security Number"
+disables the SSN field, clears its error and satisfies the step — the live
+wizard's alternative path.
 
 ⚠️ One deliberate divergence: the live form uses a **floating label** (12px,
 `#666`, absolutely positioned, animating to the top on focus/fill). This sheet
@@ -555,7 +576,7 @@ colours match; the label pattern does not.
 
 | | Mobile | Desktop (≥768) |
 | --- | --- | --- |
-| Position | rises from the bottom, **`top: max(72px, 8vh)`** so a real strip of the page stays visible | full-height panel pinned right, 520px wide |
+| Position | rises from the bottom, **`top: max(96px, env(safe-area-inset-top) + 80px)`** so a real strip of the page stays visible | full-height panel pinned right, 520px wide |
 | Transform | `translateY(100%)` → 0 | `translateX(100%)` → 0 |
 | Header | dismiss **X at the left**, **Capella logo centred** | **logo left**, X **right** |
 | Corners | 12px top | square |
@@ -572,8 +593,10 @@ a logo alone announces nothing useful, so screen readers would lose all sense of
 which step they are on.
 
 ⚠️ At `top: 24px` the mobile sheet read as a full-screen takeover rather than a
-sheet. `max(72px, 8vh)` keeps a legible band of the page behind it (the anatomy's
-"Previous context") with a floor for short viewports.
+sheet, and `max(72px, 8vh)` still only cleared the utility bar. At **96px** the
+peek shows the utility bar *and* the top of the red-logo header, so the page
+behind is recognisable as the homepage rather than an anonymous grey band. The
+`env(safe-area-inset-top) + 80px` term keeps the same clearance below a notch.
 
 ⚠️ `.sheet__action` is `display: inline-flex`, which beats the UA's
 `[hidden] { display: none }` — Back stayed visible on step 1 until an explicit
