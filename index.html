@@ -709,8 +709,18 @@
         <button type="button" class="sheet__dismiss" data-sheet-close aria-label="Close application">
           <span aria-hidden="true">&times;</span>
         </button>
-        <!-- Title is required by the anatomy; it names the current step. -->
-        <h2 class="sheet__title" id="sheet-title">Apply to Capella</h2>
+        <!-- The Capella lockup stands in for the per-step title. The title is kept
+             in the DOM but visually hidden so `aria-labelledby` still announces
+             which step you are on — a logo alone announces nothing useful. -->
+        <img
+          src="/assets/logo-horizontal.svg"
+          alt="Capella University"
+          class="sheet__logo"
+          width="132"
+          height="28"
+          decoding="async"
+        />
+        <h2 class="sheet__title visually-hidden" id="sheet-title">Apply to Capella</h2>
       </header>
 
       <div class="sheet__body" data-sheet-body>
@@ -722,10 +732,12 @@
           <p class="sheet__field">
             <label class="sheet__label" for="app-first">First Name</label>
             <input class="sheet__input" id="app-first" name="firstName" type="text" autocomplete="off" />
+            <span class="sheet__error" id="app-first-error" role="alert">Please enter first name.</span>
           </p>
           <p class="sheet__field">
             <label class="sheet__label" for="app-last">Last Name</label>
             <input class="sheet__input" id="app-last" name="lastName" type="text" autocomplete="off" />
+            <span class="sheet__error" id="app-last-error" role="alert">Please enter last name.</span>
           </p>
           <p class="sheet__fine">Already started an application? <a href="#">Log In</a></p>
         </div>
@@ -747,6 +759,7 @@
             <label class="sheet__label" for="app-dob">MM/DD/YYYY</label>
             <input class="sheet__input" id="app-dob" name="dob" type="text"
                    inputmode="numeric" placeholder="MM/DD/YYYY" autocomplete="off" />
+            <span class="sheet__error" id="app-dob-error" role="alert">Please enter date of birth!</span>
           </p>
         </div>
 
@@ -774,6 +787,7 @@
             <label class="sheet__label" for="app-ssn">Enter last 4 digits of SSN</label>
             <input class="sheet__input" id="app-ssn" name="ssnLast4" type="text"
                    inputmode="numeric" maxlength="4" autocomplete="off" />
+            <span class="sheet__error" id="app-ssn-error" role="alert">Please enter Enter last 4 digits of SSN.</span>
           </p>
           <label class="sheet__check">
             <input type="checkbox" name="noSsn" data-no-ssn />
@@ -805,6 +819,7 @@
           <p class="sheet__field">
             <label class="sheet__label" for="app-email">Email</label>
             <input class="sheet__input" id="app-email" name="email" type="email" autocomplete="off" />
+            <span class="sheet__error" id="app-email-error" role="alert">Please enter email address.</span>
           </p>
           <p class="sheet__fine">
             By providing your information, you consent to receive occasional special promotional
@@ -842,6 +857,7 @@
             <label class="sheet__label" for="app-password">Password</label>
             <input class="sheet__input" id="app-password" name="password" type="password"
                    placeholder="Password" autocomplete="new-password" />
+            <span class="sheet__error" id="app-password-error" role="alert">Please enter a password.</span>
           </p>
           <ul class="sheet__hints">
             <li>8-15 characters</li>

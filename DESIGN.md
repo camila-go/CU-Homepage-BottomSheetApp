@@ -510,13 +510,54 @@ fake controls:
   so the sheet's media queries resolve properly — a single page scaled down would
   render every frame at the desktop breakpoint.
 
+### Field states and validation
+
+Measured on apply.capella.edu, not invented. ⚠️ These are **not** the hero
+select's values (`1px #212322`, radius 10px) — the application form is a
+different component with its own field style.
+
+| State | Value |
+| --- | --- |
+| Rest | `1px solid #b4b4b4`, **radius 5px**, `padding: 14px 16px`, 50px tall, 16px text |
+| Hover | border darkens to `#212322` |
+| Focus | **`outline: 1.5px solid #212322`** — the border does *not* change |
+| Error | **`border: 2px solid #e50000`**, label turns `#e50000` |
+| Error message | `#e50000`, **14px / weight 500** |
+| Readonly | `#f5f5f5` fill, `#4f565b` text |
+| Disabled | `#f5f5f5` fill, `#8e8e8e` text |
+
+The error copy is the live application's own, pulled from the AEM form model's
+`mandatoryMessage` values — including `"Please enter Enter last 4 digits of SSN."`,
+whose doubled "Enter" is genuinely what the live form says.
+
+| Field | Message |
+| --- | --- |
+| First Name | Please enter first name. |
+| Last Name | Please enter last name. |
+| Date of birth | Please enter date of birth! |
+| SSN | Please enter Enter last 4 digits of SSN. |
+| Email | Please enter email address. |
+| Password | Please enter a password. |
+
+Behaviour: the docked action refuses to advance while a required field is empty,
+flags every empty field at once, and moves focus to the first one. Errors clear on
+input, not on blur. `aria-invalid` drives the styling so the visual and accessible
+states cannot drift, and `aria-describedby` links the field to its message.
+Ticking "I don't have Social Security Number" disables the SSN field, clears its
+error and satisfies the step — the live wizard's alternative path.
+
+⚠️ One deliberate divergence: the live form uses a **floating label** (12px,
+`#666`, absolutely positioned, animating to the top on focus/fill). This sheet
+keeps static labels above each field. The border, radius, padding and all state
+colours match; the label pattern does not.
+
 ### Sheet anatomy
 
 | | Mobile | Desktop (≥768) |
 | --- | --- | --- |
-| Position | rises from the bottom, `top: 24px` so the previous context peeks behind | full-height panel pinned right, 520px wide |
+| Position | rises from the bottom, **`top: max(72px, 8vh)`** so a real strip of the page stays visible | full-height panel pinned right, 520px wide |
 | Transform | `translateY(100%)` → 0 | `translateX(100%)` → 0 |
-| Header | dismiss **X at the left**, title **centred** | title **left**, X **right** |
+| Header | dismiss **X at the left**, **Capella logo centred** | **logo left**, X **right** |
 | Corners | 12px top | square |
 | Drag handle | shown at the bottom | hidden (touch affordance only) |
 
@@ -524,6 +565,15 @@ Shared: a `rgba(33,35,34,.5)` scrim, scrollable body with
 `overscroll-behavior: contain`, a docked action row (Back ghost + primary), body
 scroll lock while open, Escape to close, a Tab focus trap, and focus returned to
 the trigger on close.
+
+⚠️ The header shows the **Capella lockup**, not a per-step text title. The title
+is still in the DOM but visually hidden, because `aria-labelledby` points at it —
+a logo alone announces nothing useful, so screen readers would lose all sense of
+which step they are on.
+
+⚠️ At `top: 24px` the mobile sheet read as a full-screen takeover rather than a
+sheet. `max(72px, 8vh)` keeps a legible band of the page behind it (the anatomy's
+"Previous context") with a floor for short viewports.
 
 ⚠️ `.sheet__action` is `display: inline-flex`, which beats the UA's
 `[hidden] { display: none }` — Back stayed visible on step 1 until an explicit

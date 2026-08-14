@@ -34,8 +34,19 @@ const NEXT_LABEL = {
   10: 'Ok, Got it!',
 };
 
-// Short titles for the sheet header (the anatomy requires a title; the live
-// wizard has no header, so these name the step).
+// Which fields each step requires. The docked action validates these before
+// advancing, mirroring the live wizard (whose Continue also refuses to move on).
+// The messages in the markup are the live application's own strings.
+const REQUIRED = {
+  1: ['app-first', 'app-last'],
+  3: ['app-dob'],
+  5: ['app-ssn'],
+  7: ['app-email'],
+  9: ['app-password'],
+};
+
+// The sheet header shows the Capella logo, so these titles are announced to
+// assistive tech only (the visually-hidden #sheet-title). They are not displayed.
 const STEP_TITLE = {
   1: 'Your name',
   2: 'Welcome',
@@ -101,6 +112,67 @@ function initSheet() {
     body.scrollTop = 0;
   }
 
+  // ---- Validation -------------------------------------------------------
+  const fieldOf = (input) => input.closest('.sheet__field');
+
+  function clearError(input) {
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+    fieldOf(input)?.classList.remove('is-invalid');
+  }
+
+  function showError(input) {
+    const err = sheet.querySelector('#' + input.id + '-error');
+    input.setAttribute('aria-invalid', 'true');
+    if (err) input.setAttribute('aria-describedby', err.id);
+    fieldOf(input)?.classList.add('is-invalid');
+  }
+
+  /* Returns true when the current step is complete. The SSN step is satisfied
+     either by four digits or by the "I don't have Social Security Number"
+     checkbox — the live wizard treats the checkbox as the alternative. */
+  function validateStep(n) {
+    const ids = REQUIRED[n] || [];
+    let firstBad = null;
+    for (const id of ids) {
+      const input = sheet.querySelector('#' + id);
+      if (!input) continue;
+      if (id === 'app-ssn' && sheet.querySelector('[data-no-ssn]')?.checked) {
+        clearError(input);
+        continue;
+      }
+      if (!input.value.trim()) {
+        showError(input);
+        if (!firstBad) firstBad = input;
+      } else {
+        clearError(input);
+      }
+    }
+    if (firstBad) firstBad.focus();
+    return !firstBad;
+  }
+
+  // Clear a field's error as soon as the user starts fixing it.
+  sheet.querySelectorAll('.sheet__input').forEach((input) => {
+    input.addEventListener('input', () => {
+      if (input.value.trim()) clearError(input);
+    });
+  });
+
+  // Ticking "I don't have SSN" clears that field's error and disables it, which
+  // is the feedback the live form gives for the alternative path.
+  const noSsn = sheet.querySelector('[data-no-ssn]');
+  const ssnInput = sheet.querySelector('#app-ssn');
+  if (noSsn && ssnInput) {
+    noSsn.addEventListener('change', () => {
+      ssnInput.disabled = noSsn.checked;
+      if (noSsn.checked) {
+        ssnInput.value = '';
+        clearError(ssnInput);
+      }
+    });
+  }
+
   function open(trigger) {
     opener = trigger || null;
     scrim.hidden = false;
@@ -140,6 +212,8 @@ function initSheet() {
       close();
       return;
     }
+    // Refuse to advance while the step is incomplete, as the live wizard does.
+    if (!validateStep(current)) return;
     // ⚠️ 5 → 7, skipping 6. On the live site step 6 ("We meet again!") only
     // appears when the entered SSN matches an existing Capella account, so it is
     // the exception, not the normal route — routing through it by default made
