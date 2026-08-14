@@ -134,8 +134,6 @@ function initSheet() {
   let current = 1;
   let opener = null;
 
-  const stepEl = (n) => steps.find((s) => Number(s.dataset.step) === n);
-
   const collect = () => ({
     firstName: (sheet.querySelector('#app-first')?.value || '').trim(),
     dob: (sheet.querySelector('#app-dob')?.value || '').trim(),
@@ -162,14 +160,42 @@ function initSheet() {
     const emailConfirm = sheet.querySelector('#app-email-confirm');
     if (emailConfirm) emailConfirm.value = data.email;
 
-    // "Step n of 10" — the live wizard has no visible counter, but without one a
-    // ten-step flow in a sheet gives no sense of length.
-    const el = stepEl(current);
-    const counter = el && el.querySelector('[data-step-count]');
-    if (counter) counter.textContent = `Step ${current} of ${total}`;
+    // ⚠️ No "Step n of 10" counter. The live application doesn't show one, and an
+    // invented counter also fixes a length the conditional branches don't have —
+    // steps 2, 4, 5 and 6 are skipped or terminal depending on the record match,
+    // so "of 10" would be wrong for most real paths.
+
+    // render() fills the readonly confirm fields programmatically, and assigning
+    // `.value` fires no events — so float them here rather than relying on the
+    // listeners below.
+    syncAllFloats();
 
     body.scrollTop = 0;
   }
+
+  /* ---- Floating labels ---------------------------------------------------
+   * jvFloat toggles its label purely on the field having a value, bound to
+   * `keyup blur change`. Mirrored here on `input change blur`.
+   * ⚠️ Deliberately NOT on focus: focusing an empty field leaves the label down
+   * and the placeholder showing, which is the live behaviour.
+   */
+  const inputs = [...sheet.querySelectorAll('.sheet__input')];
+
+  function syncFloat(input) {
+    input
+      .closest('.sheet__field')
+      ?.classList.toggle('is-floating', input.value !== '');
+  }
+
+  function syncAllFloats() {
+    inputs.forEach(syncFloat);
+  }
+
+  inputs.forEach((input) => {
+    ['input', 'change', 'blur'].forEach((evt) => {
+      input.addEventListener(evt, () => syncFloat(input));
+    });
+  });
 
   // ---- Validation -------------------------------------------------------
   const fieldOf = (input) => input.closest('.sheet__field');
@@ -247,6 +273,7 @@ function initSheet() {
       if (noSsn.checked) {
         ssnInput.value = '';
         clearError(ssnInput);
+        syncFloat(ssnInput);
       }
     });
   }

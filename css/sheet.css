@@ -202,12 +202,6 @@
   display: none;
 }
 
-.sheet__eyebrow {
-  margin: 0 0 8px;
-  font-size: var(--text-body-sm);
-  color: #696f74;
-}
-
 .sheet__step-title {
   margin: 0 0 12px;
   font-family: var(--font-body);
@@ -223,26 +217,83 @@
   color: #4f565b;
 }
 
+/* ⚠️ The floating label is positioned against this box, so the input must stay
+   the first in-flow child — `top: 0` is only the input's top edge because nothing
+   precedes it. The 40px bottom margin matches the live field rhythm (input
+   `margin: 10px 0 30px`) and also gives the next label the ~21px it rises into.
+   6px is the live gap between a failed input and its message. */
 .sheet__field {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin: 0 0 40px;
 }
 
-/* ⚠️ 12px, regular, #666 — measured on the live form. Not 15px bold: the
-   application's field labels are small and quiet, sitting above a 16px value. */
+/* Floating label — the live form's jvFloat pattern, reproduced from
+ * `.guideFieldWidget .jvFloat .placeHolder{,.active}`.
+ *
+ * The same string is BOTH the `<label>` and the input's `placeholder`, which is
+ * how jvFloat works: it reads the placeholder attribute and injects the label
+ * from it. So at rest the hint sits *inside* the field and the label is invisible
+ * at the field's top edge; once the field holds a value the label lifts onto the
+ * border, its white background and 1px 8px padding notching the 1px rule out
+ * from under it.
+ *
+ * ⚠️ It floats on VALUE, not focus. jvFloat binds `keyup blur change` and does
+ * `toggleClass('active', input.value !== '')` — focusing an empty field leaves
+ * the label down and the placeholder showing, which is what the live form does.
+ * Animating on focus would look tidier and be wrong.
+ */
+/* ⚠️ The offsets are expressed against the INPUT's top edge, measured on the live
+   form: at rest the label's centre sits 25px down (the middle of the 50px field,
+   right where the placeholder text is), and floated it sits 1px down — i.e.
+   centred on the 1px top border, which its white background notches out.
+   Live writes these as `top: 0` and `top: -14px` against a `display: inline`
+   wrapper whose box starts 15px below the input; here the field is a block, so
+   the same positions are 25px and 0. Copying live's literal numbers put the label
+   14px too high, clear of the border, which made the white background pointless.
+   25px is half the input's fixed 50px — not `top: 50%`, which would drift once an
+   error message grows the field. */
 .sheet__label {
+  position: absolute;
+  top: 25px;
+  left: 14px;
+  transform: translateY(-50%);
+  padding: 1px 8px;
+  background: var(--color-white);
+  color: #666666;
   font-size: 0.75rem; /* 12px */
   font-weight: 400;
-  color: #666666;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 200ms;
 }
 
-/* Field states, measured on apply.capella.edu — see DESIGN.md.
-     rest      1px #b4b4b4, radius 5px, padding 14px 16px, 50px tall
-     focus     outline 1.5px #212322 (the border does NOT change)
-     error     border 2px #e50000, message #e50000 at 14px/500
-     readonly  #f5f5f5 fill
+.sheet__field.is-floating .sheet__label {
+  top: 0;
+  left: 5px;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* ⚠️ One property diverges: live also sets `visibility: hidden` on the resting
+   label, which drops it out of the accessibility tree and leaves the field named
+   only by its `placeholder` — a weak accessible name. Opacity alone is pixel-wise
+   identical and keeps the name stable whether the label is up or down. */
+
+/* Live: `.guideFieldNode[data-disabled="true"] .jvFloat .placeHolder`. A disabled
+   field hides the label outright rather than fading it. */
+.sheet__field:has(.sheet__input:disabled) .sheet__label {
+  display: none;
+}
+
+/* Field states, taken from the live application theme's own rules
+   (`.guideContainerWrapperNode .guideFieldWidget input[type=…]`):
+     rest      1px #b4b4b4, radius 5px, padding 14px 16px, colour #212322
+     focus     border 2px #006b99, outline 0, padding 13px 15px
+     error     border 2px #e50000, text #e50000, padding 13px 15px
+     disabled  #f5f5f5 fill
    ⚠️ These are NOT the hero select's values (1px #212322 / radius 10px) — the
    application form is a different component with its own field style. */
 .sheet__input {
@@ -256,30 +307,59 @@
   font-size: var(--text-body);
 }
 
-.sheet__input:hover:not([readonly]):not(:disabled) {
-  border-color: var(--color-uni-black);
+/* The placeholder carries the label text at rest, so its colour is the same #666
+   the floated label uses. */
+.sheet__input::placeholder {
+  color: #666666;
 }
 
-.sheet__input:focus-visible {
-  outline: 1.5px solid var(--color-uni-black);
-  outline-offset: 0;
+/* ⚠️ No hover state. The live theme has hover rules for buttons and for
+   checkbox/radio tiles, but none for text inputs — an earlier version darkened
+   the border on hover, which was invented. */
+
+/* ⚠️ Focus is a 2px #006b99 border with `outline: 0` — the AEM theme's blue,
+   which appears nowhere in the Capella palette but is genuinely what the
+   application uses. Not the black outline this had before. The padding drops by
+   1px so the 1px → 2px border doesn't shift the text or the box. */
+.sheet__input:focus {
+  border: 2px solid #006b99;
+  outline: 0;
+  padding: 13px 15px;
 }
 
+/* Live: `input[readonly='readonly'] { background-color: #f5f5f5; pointer-events: none }`.
+   ⚠️ Only the fill changes — the text stays #212322, not the softer grey this had
+   invented for it. */
 .sheet__input[readonly] {
   background: #f5f5f5;
-  color: #4f565b;
+  pointer-events: none;
 }
 
+/* ⚠️ A focused readonly field keeps the REST border, not the blue focus one, and
+   drops its text to #666. Without this the confirm steps' fields would light up
+   blue on a field the user can't edit. */
+.sheet__input[readonly]:focus {
+  border: 1px solid #b4b4b4;
+  padding: 14px 16px;
+  color: #666666;
+}
+
+/* Live sets the fill only here too; `cursor` is ours, since a disabled field the
+   user can still point at should say so. */
 .sheet__input:disabled {
   background: #f5f5f5;
-  color: #8e8e8e;
   cursor: not-allowed;
 }
 
 /* Error. `aria-invalid` drives it so the visual and the accessible state cannot
-   drift apart. The 2px border replaces the 1px rest border. */
-.sheet__input[aria-invalid='true'] {
+   drift apart. The 2px border replaces the 1px rest border and the padding drops
+   to compensate, so the box holds its size. The live rule also turns the field's
+   own text #e50000, not just its border. */
+.sheet__input[aria-invalid='true'],
+.sheet__input[aria-invalid='true']:focus {
   border: 2px solid #e50000;
+  padding: 13px 15px;
+  color: #e50000;
 }
 
 .sheet__error {
@@ -315,9 +395,9 @@
   line-height: 1;
 }
 
-.sheet__field.is-invalid .sheet__label {
-  color: #e50000;
-}
+/* ⚠️ The floating label stays #666 in the error state. Nothing in the live theme
+   recolours `.placeHolder` under `.validation-failure` — only the input's border
+   and text turn red. Turning the label red too was invented. */
 
 .sheet__check {
   display: flex;

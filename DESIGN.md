@@ -512,25 +512,43 @@ fake controls:
 
 ### Field states and validation
 
-Measured on apply.capella.edu, not invented. ⚠️ These are **not** the hero
-select's values (`1px #212322`, radius 10px) — the application form is a
-different component with its own field style.
+Read out of the live application's own theme rather than eyeballed — the
+`.guideContainerWrapperNode .guideFieldWidget input[type=…]` block in
+`clientlib-capella-application-form.css`, cross-checked against the rendered page.
+⚠️ These are **not** the hero select's values (`1px #212322`, radius 10px) — the
+application form is a different component with its own field style.
 
 | State | Value |
 | --- | --- |
-| Label | **12px / weight 400 / `#666`** — small and quiet above a 16px value, not 15px bold |
-| Rest | `1px solid #b4b4b4`, **radius 5px**, `padding: 14px 16px`, 50px tall, 16px text |
-| Hover | border darkens to `#212322` |
-| Focus | **`outline: 1.5px solid #212322`** — the border does *not* change |
-| Error | **`border: 2px solid #e50000`**, label turns `#e50000` |
-| Error message | `#e50000`, **14px / 18px / weight 500**, led by a warning badge |
-| Readonly | `#f5f5f5` fill, `#4f565b` text |
-| Disabled | `#f5f5f5` fill, `#8e8e8e` text |
+| Label | floating, **12px / weight 400 / `#666`** on a white ground, `padding: 1px 8px` |
+| Rest | `1px solid #b4b4b4`, **radius 5px**, `padding: 14px 16px`, 50px tall, text `#212322` |
+| Placeholder | `#666` — it carries the label text while the field is empty |
+| Hover | **none** |
+| Focus | **`border: 2px solid #006b99`, `outline: 0`, `padding: 13px 15px`** |
+| Error | **`border: 2px solid #e50000`**, **text `#e50000`**, `padding: 13px 15px` |
+| Error message | `#e50000`, **14px / 18px / weight 500**, led by a warning badge, 6px below the field |
+| Readonly | `#f5f5f5` fill, `pointer-events: none`; text stays `#212322` |
+| Readonly + focus | keeps the **rest** border (`1px #b4b4b4`, `padding: 14px 16px`), text `#666` |
+| Disabled | `#f5f5f5` fill; the floating label is `display: none` |
 | Checkbox | **26×26**, `appearance: none`, `1px #b4b4b4`, radius 4px; checked = `#c10016` fill + white tick |
+| Field rhythm | **40px** between one input's bottom edge and the next input's top |
 
-⚠️ The 2px error border replaces the 1px rest border rather than adding to it, so
-the field's height holds at 50px and the layout doesn't shift by 2px when a
-message appears.
+⚠️ Three of these had been invented and are now corrected:
+
+- **There is no hover state on text inputs.** The theme has hover rules for
+  buttons and for checkbox/radio tiles, none for inputs. An earlier pass darkened
+  the border to `#212322` on hover.
+- **Focus is a 2px `#006b99` border, not a black outline.** That blue appears
+  nowhere in the Capella palette — it is the AEM theme's own accent — but it is
+  genuinely what the application shows. `outline: 0` with a 2px border is still a
+  legible focus indicator, so it is kept as-is.
+- **The error state reddens the field's text too**, and a focused readonly field
+  must be pinned back to the rest border or it lights up blue on a field the user
+  cannot edit.
+
+⚠️ The 2px error and focus borders **replace** the 1px rest border and drop the
+padding by 1px to compensate, so the box holds at 50px and neither the text nor
+the layout shifts.
 
 ⚠️ The live message leads with a Font Awesome warning glyph (19px, `#e50000`).
 It's drawn in CSS here (a 16px `#e50000` circle with a white `!`) so the error
@@ -567,10 +585,51 @@ links the field to its message. Ticking "I don't have Social Security Number"
 disables the SSN field, clears its error and satisfies the step — the live
 wizard's alternative path.
 
-⚠️ One deliberate divergence: the live form uses a **floating label** (12px,
-`#666`, absolutely positioned, animating to the top on focus/fill). This sheet
-keeps static labels above each field. The border, radius, padding and all state
-colours match; the label pattern does not.
+### Floating labels
+
+The live form uses the **jvFloat** jQuery plugin
+(`.guideFieldWidget .jvFloat .placeHolder{,.active}`). jvFloat reads the input's
+`placeholder` attribute and injects a `<label>` from it, so **the same string is
+both the placeholder and the label**. Every field here carries both.
+
+- **Empty** — the hint sits *inside* the field as the native placeholder; the
+  label is `opacity: 0`, centred in the field at **+25px** from the input's top
+  edge and **+14px** from its left.
+- **Filled** — the label lifts to **+0px** (centred on the 1px top border, which
+  its white `padding: 1px 8px` ground notches out) and **+5px** from the left.
+- `transition: all 200ms`.
+
+⚠️ **It floats on VALUE, not focus.** jvFloat binds `keyup blur change` and runs
+`toggleClass('active', input.value !== '')`. Focusing an empty field leaves the
+label down and the placeholder showing; only typing lifts it. Animating on focus
+looks tidier and is wrong.
+
+⚠️ **Live's literal `top` values don't transplant.** Live writes rest `top: 0` and
+floated `top: -14px` against a `.jvFloat` wrapper that is `position: relative;
+display: inline`, whose box starts **15px below** the input's top edge (and whose
+own `margin-top: 1em` is inert, because vertical margins don't apply to inline
+boxes). Copying `-14px` into a block-level field put the label 14px too high —
+clear of the border, which makes a white background pointless. Measured on the
+live page, the floated label's centre is **1px** below the input's top edge and
+the resting centre is **25px** below it; those are the numbers to use. The rest
+offset is written as `top: 25px` (half the fixed 50px input) rather than
+`top: 50%`, which would drift once an error message grows the field.
+
+⚠️ One property diverges deliberately: live also sets `visibility: hidden` on the
+resting label, which drops it out of the accessibility tree and leaves the field
+named only by its `placeholder` — a weak accessible name. Opacity alone is
+pixel-identical and keeps the name stable whether the label is up or down.
+
+⚠️ The floating label **stays `#666` in the error state**. Nothing in the live
+theme recolours `.placeHolder` under `.validation-failure`; only the input's
+border and text turn red.
+
+### No step counter
+
+⚠️ There is no "Step n of 10" line. The live application doesn't show one, and an
+invented counter also fixes a length the flow doesn't have — steps 2, 4, 5 and 6
+are skipped or terminal depending on the record match, so "of 10" is wrong for
+most real paths.
 
 ### Sheet anatomy
 

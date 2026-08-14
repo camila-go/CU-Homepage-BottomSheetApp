@@ -726,17 +726,18 @@
       <div class="sheet__body" data-sheet-body>
         <!-- 1 ── Name -->
         <div class="sheet__step" data-step="1">
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">Capella University is here to help with your educational journey.</h3>
           <p class="sheet__step-sub">Let&rsquo;s get to know you better. What&rsquo;s your name?</p>
           <p class="sheet__field">
             <label class="sheet__label" for="app-first">First Name</label>
-            <input class="sheet__input" id="app-first" name="firstName" type="text" autocomplete="off" />
+            <input class="sheet__input" id="app-first" name="firstName" type="text"
+                   placeholder="First Name" autocomplete="off" />
             <span class="sheet__error" id="app-first-error" role="alert">Please enter your first name.</span>
           </p>
           <p class="sheet__field">
             <label class="sheet__label" for="app-last">Last Name</label>
-            <input class="sheet__input" id="app-last" name="lastName" type="text" autocomplete="off" />
+            <input class="sheet__input" id="app-last" name="lastName" type="text"
+                   placeholder="Last Name" autocomplete="off" />
             <span class="sheet__error" id="app-last-error" role="alert">Please enter your last name.</span>
           </p>
           <p class="sheet__fine">Already started an application? <a href="#">Log In</a></p>
@@ -744,7 +745,6 @@
 
         <!-- 2 ── Welcome interstitial. Conditional on live (cl-dob-flow-check). -->
         <div class="sheet__step sheet__step--message" data-step="2" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">
             It&rsquo;s nice to meet you, <span data-first-name>there</span>. Let&rsquo;s get started.
           </h3>
@@ -752,7 +752,6 @@
 
         <!-- 3 ── Date of birth -->
         <div class="sheet__step" data-step="3" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">What&rsquo;s your date of birth?</h3>
           <p class="sheet__step-sub">We use this information and ensure your account is safe.</p>
           <p class="sheet__field">
@@ -765,7 +764,6 @@
 
         <!-- 4 ── Confirm DOB. Conditional on live (cl-dob-match). -->
         <div class="sheet__step" data-step="4" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">Verify your birthdate</h3>
           <p class="sheet__step-sub">
             We want to make sure our records are correct. Please review and make any needed changes
@@ -774,19 +772,19 @@
           <p class="sheet__field">
             <label class="sheet__label" for="app-dob-confirm">Birth Date</label>
             <input class="sheet__input" id="app-dob-confirm" name="dobConfirm" type="text"
-                   placeholder="month/day/year" autocomplete="off" readonly />
+                   placeholder="Birth Date" autocomplete="off" readonly />
           </p>
         </div>
 
         <!-- 5 ── SSN last four. Conditional on live (cl-ssn-number-match). -->
         <div class="sheet__step" data-step="5" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">Please enter last four digits of your Social Security Number</h3>
           <p class="sheet__step-sub">This helps us verify your identity.</p>
           <p class="sheet__field">
             <label class="sheet__label" for="app-ssn">Enter last 4 digits of SSN</label>
             <input class="sheet__input" id="app-ssn" name="ssnLast4" type="text"
-                   inputmode="numeric" maxlength="4" autocomplete="off" />
+                   inputmode="numeric" maxlength="4"
+                   placeholder="Enter last 4 digits of SSN" autocomplete="off" />
             <span class="sheet__error" id="app-ssn-error" role="alert">Please enter the last 4 digits of your SSN.</span>
           </p>
           <label class="sheet__check">
@@ -797,7 +795,6 @@
 
         <!-- 6 ── Existing account found. Conditional on live (cl-ssn-match-login). -->
         <div class="sheet__step" data-step="6" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">We meet again!</h3>
           <p class="sheet__note">
             We&rsquo;ve matched your information with your existing Capella account. Please log in with
@@ -811,14 +808,14 @@
 
         <!-- 7 ── Email -->
         <div class="sheet__step" data-step="7" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">What&rsquo;s your email address?</h3>
           <p class="sheet__step-sub">
             This will help you save your information so you can return to work on it later.
           </p>
           <p class="sheet__field">
             <label class="sheet__label" for="app-email">Email</label>
-            <input class="sheet__input" id="app-email" name="email" type="email" autocomplete="off" />
+            <input class="sheet__input" id="app-email" name="email" type="email"
+                   placeholder="Email" autocomplete="off" />
             <span class="sheet__error" id="app-email-error" role="alert">Please enter a valid email address.</span>
           </p>
           <p class="sheet__fine">
@@ -832,7 +829,6 @@
 
         <!-- 8 ── Confirm email -->
         <div class="sheet__step" data-step="8" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">
             Is this your current email, <span data-first-name>there</span>?
           </h3>
@@ -842,13 +838,12 @@
           <p class="sheet__field">
             <label class="sheet__label" for="app-email-confirm">Email</label>
             <input class="sheet__input" id="app-email-confirm" name="emailConfirm" type="email"
-                   autocomplete="off" readonly />
+                   placeholder="Email" autocomplete="off" readonly />
           </p>
         </div>
 
         <!-- 9 ── Password -->
         <div class="sheet__step" data-step="9" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">Set up your Capella password.</h3>
           <p class="sheet__step-sub">
             This will keep your application and personal information secure.
@@ -871,7 +866,6 @@
 
         <!-- 10 ── Account created -->
         <div class="sheet__step sheet__step--message" data-step="10" hidden>
-          <p class="sheet__eyebrow" data-step-count></p>
           <h3 class="sheet__step-title">Your Capella account is all set up!</h3>
           <p class="sheet__step-sub">
             We&rsquo;ll automatically save your progress after each step as you work on your
