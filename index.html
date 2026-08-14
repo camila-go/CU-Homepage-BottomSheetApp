@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="css/nav-live.css" />
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/sheet.css" />
     <link rel="preload" as="image" href="/assets/hero-wide.jpg" fetchpriority="high" />
     <script src="https://kit.fontawesome.com/f1bee60eab.js" crossorigin="anonymous"></script>
   </head>
@@ -681,8 +682,205 @@
       </div>
     </footer>
 
+
+    <!-- ============================================================
+         Application sheet — bottom sheet on mobile, right-aligned modal on
+         desktop. Ported from apply.capella.edu (AEM adaptive form), captured
+         2026-08-13. All ten wizard steps are present; see DESIGN.md.
+
+         ⚠️ PROTOTYPE ONLY — NOT FOR DEPLOYMENT. Steps 3–5 and 9 reproduce the
+         real application's date-of-birth, last-4-SSN and password fields. There
+         is no form action, no endpoint and no storage: nothing is submitted or
+         persisted anywhere, and `autocomplete="off"` keeps browsers from
+         retaining entries. Do not deploy this publicly and do not type real
+         personal data into it.
+         ============================================================ -->
+    <div class="sheet-scrim" data-sheet-scrim hidden></div>
+
+    <section
+      class="sheet"
+      id="application-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sheet-title"
+      hidden
+    >
+      <header class="sheet__header">
+        <button type="button" class="sheet__dismiss" data-sheet-close aria-label="Close application">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <!-- Title is required by the anatomy; it names the current step. -->
+        <h2 class="sheet__title" id="sheet-title">Apply to Capella</h2>
+      </header>
+
+      <div class="sheet__body" data-sheet-body>
+        <!-- 1 ── Name -->
+        <div class="sheet__step" data-step="1">
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">Capella University is here to help with your educational journey.</h3>
+          <p class="sheet__step-sub">Let&rsquo;s get to know you better. What&rsquo;s your name?</p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-first">First Name</label>
+            <input class="sheet__input" id="app-first" name="firstName" type="text" autocomplete="off" />
+          </p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-last">Last Name</label>
+            <input class="sheet__input" id="app-last" name="lastName" type="text" autocomplete="off" />
+          </p>
+          <p class="sheet__fine">Already started an application? <a href="#">Log In</a></p>
+        </div>
+
+        <!-- 2 ── Welcome interstitial. Conditional on live (cl-dob-flow-check). -->
+        <div class="sheet__step sheet__step--message" data-step="2" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">
+            It&rsquo;s nice to meet you, <span data-first-name>there</span>. Let&rsquo;s get started.
+          </h3>
+        </div>
+
+        <!-- 3 ── Date of birth -->
+        <div class="sheet__step" data-step="3" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">What&rsquo;s your date of birth?</h3>
+          <p class="sheet__step-sub">We use this information and ensure your account is safe.</p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-dob">MM/DD/YYYY</label>
+            <input class="sheet__input" id="app-dob" name="dob" type="text"
+                   inputmode="numeric" placeholder="MM/DD/YYYY" autocomplete="off" />
+          </p>
+        </div>
+
+        <!-- 4 ── Confirm DOB. Conditional on live (cl-dob-match). -->
+        <div class="sheet__step" data-step="4" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">Verify your birthdate</h3>
+          <p class="sheet__step-sub">
+            We want to make sure our records are correct. Please review and make any needed changes
+            before we continue.
+          </p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-dob-confirm">Birth Date</label>
+            <input class="sheet__input" id="app-dob-confirm" name="dobConfirm" type="text"
+                   placeholder="month/day/year" autocomplete="off" readonly />
+          </p>
+        </div>
+
+        <!-- 5 ── SSN last four. Conditional on live (cl-ssn-number-match). -->
+        <div class="sheet__step" data-step="5" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">Please enter last four digits of your Social Security Number</h3>
+          <p class="sheet__step-sub">This helps us verify your identity.</p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-ssn">Enter last 4 digits of SSN</label>
+            <input class="sheet__input" id="app-ssn" name="ssnLast4" type="text"
+                   inputmode="numeric" maxlength="4" autocomplete="off" />
+          </p>
+          <label class="sheet__check">
+            <input type="checkbox" name="noSsn" data-no-ssn />
+            I don&rsquo;t have Social Security Number
+          </label>
+        </div>
+
+        <!-- 6 ── Existing account found. Conditional on live (cl-ssn-match-login). -->
+        <div class="sheet__step" data-step="6" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">We meet again!</h3>
+          <p class="sheet__note">
+            We&rsquo;ve matched your information with your existing Capella account. Please log in with
+            your user ID to continue your application.
+          </p>
+          <p class="sheet__step-sub">
+            If you have any questions or need support, contact an enrollment specialist at
+            1-888-227-3552
+          </p>
+        </div>
+
+        <!-- 7 ── Email -->
+        <div class="sheet__step" data-step="7" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">What&rsquo;s your email address?</h3>
+          <p class="sheet__step-sub">
+            This will help you save your information so you can return to work on it later.
+          </p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-email">Email</label>
+            <input class="sheet__input" id="app-email" name="email" type="email" autocomplete="off" />
+          </p>
+          <p class="sheet__fine">
+            By providing your information, you consent to receive occasional special promotional
+            offers and education opportunities by phone, text message and email via automated
+            technology, including artificial or prerecorded voice, from Capella University. You may
+            opt out at any time. Consent is not required to purchase goods or services. You can
+            always call us at 1.888.227.9897. We respect your privacy.
+          </p>
+        </div>
+
+        <!-- 8 ── Confirm email -->
+        <div class="sheet__step" data-step="8" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">
+            Is this your current email, <span data-first-name>there</span>?
+          </h3>
+          <p class="sheet__step-sub">
+            We&rsquo;ll use this email to save your information as you complete this application.
+          </p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-email-confirm">Email</label>
+            <input class="sheet__input" id="app-email-confirm" name="emailConfirm" type="email"
+                   autocomplete="off" readonly />
+          </p>
+        </div>
+
+        <!-- 9 ── Password -->
+        <div class="sheet__step" data-step="9" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">Set up your Capella password.</h3>
+          <p class="sheet__step-sub">
+            This will keep your application and personal information secure.
+          </p>
+          <p class="sheet__field">
+            <label class="sheet__label" for="app-password">Password</label>
+            <input class="sheet__input" id="app-password" name="password" type="password"
+                   placeholder="Password" autocomplete="new-password" />
+          </p>
+          <ul class="sheet__hints">
+            <li>8-15 characters</li>
+            <li>One uppercase letter</li>
+            <li>One lowercase letter</li>
+            <li>One number</li>
+            <li>One special character (such as $, #, &amp;, !)</li>
+            <li>Cannot contain your name or email address</li>
+          </ul>
+        </div>
+
+        <!-- 10 ── Account created -->
+        <div class="sheet__step sheet__step--message" data-step="10" hidden>
+          <p class="sheet__eyebrow" data-step-count></p>
+          <h3 class="sheet__step-title">Your Capella account is all set up!</h3>
+          <p class="sheet__step-sub">
+            We&rsquo;ll automatically save your progress after each step as you work on your
+            application. Need a break? You can use your email and password to log in and continue at
+            any time.
+          </p>
+        </div>
+      </div>
+
+      <!-- Docked final action, per the anatomy. Labels change per step, matching
+           the live wizard ("Continue", "Looks good!", "Agree and Go", …). -->
+      <footer class="sheet__footer">
+        <div class="sheet__actions">
+          <button type="button" class="sheet__action sheet__action--ghost" data-sheet-back hidden>
+            Back
+          </button>
+          <button type="button" class="sheet__action" data-sheet-next>Continue</button>
+        </div>
+        <span class="sheet__handle" aria-hidden="true"></span>
+      </footer>
+    </section>
+
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/hero.js"></script>
     <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/sheet.js"></script>
   </body>
 </html>

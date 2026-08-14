@@ -452,3 +452,76 @@ The prototype's `<meta name="theme-color" content="#c10016">` (already in
 | Footer | dark | dark ✅ already close |
 
 The footer is the one piece that already matches.
+
+## Application sheet
+
+Ported from **apply.capella.edu** (an Adobe AEM adaptive form), captured
+2026-08-13. "Apply now" on the live site navigates there; here it opens the
+application in a sheet instead.
+
+### ⚠️ Prototype only — not for deployment
+
+Steps 3–5 and 9 reproduce the real application's **date of birth**, **last four
+SSN digits** and **password** fields. There is no form action, no endpoint and no
+storage: nothing is submitted or persisted, and the inputs carry
+`autocomplete="off"`. Do not deploy this publicly and do not type real personal
+data into it. If a backend is ever added, revisit these steps first.
+
+### The ten steps
+
+The live wizard marks each step with `.tab-panel` inside `.guidePanelNode`;
+enumerating those is what gives the definitive list.
+
+| # | Live panel | Heading | Fields | Docked action |
+| --- | --- | --- | --- | --- |
+| 1 | `namePanel` | Capella University is here to help with your educational journey. | First Name, Last Name | Continue |
+| 2 | `welcomePanel` † | It's nice to meet you, {firstName}. Let's get started. | — | Continue |
+| 3 | `dobPanel` | What's your date of birth? | MM/DD/YYYY | Continue |
+| 4 | `confirmDOBPanel` † | Verify your birthdate | Birth Date (readonly) | Looks good! |
+| 5 | `SSNPanel` † | Please enter last four digits of your Social Security Number | SSN last 4, "I don't have Social Security Number" | Continue |
+| 6 | `ssnLoginPanel` † | We meet again! | — | Go to Log In *(terminal)* |
+| 7 | `emailPanel` | What's your email address? | Email + consent copy | Agree and Go |
+| 8 | *(email confirm)* | Is this your current email, {firstName}? | Email (readonly) | Looks good! |
+| 9 | `passwordPanel` | Set up your Capella password. | Password + 6 rules | Continue |
+| 10 | `accountSetupMessagePanel` | Your Capella account is all set up! | — | Ok, Got it! |
+
+† **Conditional on the live site.** `cl-dob-flow-check`, `cl-dob-match`,
+`cl-ssn-number-match` and `cl-ssn-match-login` gate steps 2, 4, 5 and 6 on a
+record match upstream.
+
+Password rules (step 9), verbatim: 8-15 characters · One uppercase letter · One
+lowercase letter · One number · One special character (such as $, #, &, !) ·
+Cannot contain your name or email address.
+
+⚠️ **Step 6 is the exception, not the route.** "We meet again!" only appears when
+the entered SSN matches an existing Capella account, and it *terminates* the flow
+(it links to log in). Routing through it by default dead-ends the common path
+before email and password, so the default path is **5 → 7**.
+
+### Reviewing every step
+
+The conditional steps aren't reachable by clicking through. Rather than adding
+fake controls:
+
+- `?step=N` opens the sheet at step N on load — e.g. `/?step=6`
+- `__sheetGoTo(n)` jumps while the sheet is open
+
+### Sheet anatomy
+
+| | Mobile | Desktop (≥768) |
+| --- | --- | --- |
+| Position | rises from the bottom, `top: 24px` so the previous context peeks behind | full-height panel pinned right, 520px wide |
+| Transform | `translateY(100%)` → 0 | `translateX(100%)` → 0 |
+| Header | dismiss **X at the left**, title **centred** | title **left**, X **right** |
+| Corners | 12px top | square |
+| Drag handle | shown at the bottom | hidden (touch affordance only) |
+
+Shared: a `rgba(33,35,34,.5)` scrim, scrollable body with
+`overscroll-behavior: contain`, a docked action row (Back ghost + primary), body
+scroll lock while open, Escape to close, a Tab focus trap, and focus returned to
+the trigger on close.
+
+⚠️ `.sheet__action` is `display: inline-flex`, which beats the UA's
+`[hidden] { display: none }` — Back stayed visible on step 1 until an explicit
+`.sheet__action[hidden] { display: none }` was added. Same trap as
+`.hero__field[hidden]`.

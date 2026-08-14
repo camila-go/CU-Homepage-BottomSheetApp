@@ -1,0 +1,340 @@
+/* Application sheet — bottom sheet on mobile, right-aligned modal on desktop.
+ *
+ * Anatomy follows the supplied design:
+ *   MOBILE  a sheet rising from the bottom, the previous context peeking behind
+ *           it; header with a dismiss X at the LEFT and the required title
+ *           centred; scrollable content; a docked final-action button; a drag
+ *           handle at the very bottom.
+ *   DESKTOP a full-height panel pinned to the RIGHT over a dimmed scrim, with the
+ *           title and the X on one header row.
+ *
+ * The same markup serves both — only the sheet's box and the header's layout
+ * change at the breakpoint.
+ */
+
+/* ---- Scrim ------------------------------------------------------------- */
+.sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(33, 35, 34, 0.5);
+  opacity: 0;
+  transition: opacity var(--duration-med) ease;
+}
+
+.sheet-scrim[hidden] {
+  display: none;
+}
+
+.sheet-scrim.is-open {
+  opacity: 1;
+}
+
+/* ---- Sheet ------------------------------------------------------------- */
+.sheet {
+  position: fixed;
+  z-index: 210;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  color: var(--color-uni-black);
+  /* Mobile: rise from the bottom, stopping short of the top so the previous
+     context stays visible behind it (per the anatomy's "Previous context"). */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 24px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(100%);
+  transition: transform var(--duration-med) var(--ease-out-expo);
+}
+
+.sheet[hidden] {
+  display: none;
+}
+
+.sheet.is-open {
+  transform: translateY(0);
+}
+
+/* ---- Header ------------------------------------------------------------ */
+/* Three columns so the title is optically centred regardless of the X's width. */
+.sheet__header {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #d9d9d6;
+}
+
+.sheet__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--color-uni-black);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sheet__dismiss:hover {
+  background: #f5f5f5;
+}
+
+.sheet__dismiss:focus-visible {
+  outline: 2px solid var(--color-uni-black);
+  outline-offset: 2px;
+}
+
+.sheet__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---- Scrollable content ----------------------------------------------- */
+.sheet__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  /* The sheet owns its scrolling; don't chain to the page behind it. */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 15px 8px;
+}
+
+/* ---- Docked action ---------------------------------------------------- */
+.sheet__footer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 15px;
+  border-top: 1px solid #d9d9d6;
+  background: var(--color-white);
+}
+
+.sheet__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.sheet__actions .sheet__action {
+  flex: 1 1 0;
+}
+
+/* The docked primary uses the site's own filled-button spec. */
+.sheet__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 6.5px 15px;
+  border: 4px solid transparent;
+  border-radius: 7.5px;
+  background: var(--color-uni-red);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-btn);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease;
+}
+
+.sheet__action:hover {
+  background: var(--color-red-hover);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+.sheet__action:focus-visible {
+  outline: 4px solid var(--focus-ring-red);
+}
+
+.sheet__action[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ⚠️ `display: inline-flex` above beats the UA's `[hidden] { display: none }`,
+   so Back stayed visible on step 1 even with the attribute set. */
+.sheet__action[hidden] {
+  display: none;
+}
+
+.sheet__action--ghost {
+  background: none;
+  color: var(--color-uni-red);
+  box-shadow: none;
+}
+
+.sheet__action--ghost:hover {
+  background: #f5f5f5;
+  box-shadow: none;
+}
+
+/* Drag handle — the bar at the very bottom of the mobile anatomy. */
+.sheet__handle {
+  align-self: center;
+  width: 134px;
+  height: 5px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  background: var(--color-uni-black);
+}
+
+/* ---- Steps ------------------------------------------------------------- */
+.sheet__step[hidden] {
+  display: none;
+}
+
+.sheet__eyebrow {
+  margin: 0 0 8px;
+  font-size: var(--text-body-sm);
+  color: #696f74;
+}
+
+.sheet__step-title {
+  margin: 0 0 12px;
+  font-family: var(--font-body);
+  font-size: 1.375rem; /* 22px */
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.sheet__step-sub {
+  margin: 0 0 24px;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: #4f565b;
+}
+
+.sheet__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.sheet__label {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.sheet__input {
+  height: 50px;
+  padding: 0 15px;
+  border: 1px solid var(--color-uni-black);
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--color-uni-black);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+}
+
+.sheet__input:focus-visible {
+  outline: 2px solid var(--color-uni-black);
+  outline-offset: 1px;
+}
+
+.sheet__input[readonly] {
+  background: #f5f5f5;
+}
+
+.sheet__check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9375rem;
+}
+
+.sheet__hints {
+  margin: 0 0 20px;
+  padding-left: 20px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4f565b;
+}
+
+.sheet__fine {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #696f74;
+}
+
+.sheet__note {
+  margin: 0 0 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f5f5f5;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* Interstitial steps (welcome, account setup) centre their message. */
+.sheet__step--message {
+  text-align: center;
+  padding-top: 24px;
+}
+
+/* ---- Desktop: right-aligned modal ------------------------------------- */
+@media (min-width: 768px) {
+  .sheet {
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: min(520px, 100%);
+    border-radius: 0;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
+    /* Slides in from the right rather than up from the bottom. */
+    transform: translateX(100%);
+  }
+
+  .sheet.is-open {
+    transform: translateX(0);
+  }
+
+  /* Title left, X right — one row, as in the desktop reference. */
+  .sheet__header {
+    grid-template-columns: 1fr 44px;
+    padding: 16px 24px;
+  }
+
+  .sheet__title {
+    order: -1;
+    text-align: left;
+    font-size: 1.125rem;
+  }
+
+  .sheet__body {
+    padding: 32px 24px 8px;
+  }
+
+  .sheet__footer {
+    padding: 16px 24px;
+  }
+
+  /* The drag handle is a touch affordance; it has no meaning on desktop. */
+  .sheet__handle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .sheet-scrim {
+    transition: none;
+  }
+}
