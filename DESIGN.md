@@ -505,6 +505,10 @@ fake controls:
 
 - `?step=N` opens the sheet at step N on load — e.g. `/?step=6`
 - `__sheetGoTo(n)` jumps while the sheet is open
+- **`tools/review-steps.html`** renders all ten at once, each in its own frame at
+  `?step=N`, with a mobile/desktop width toggle. Each frame is a separate viewport
+  so the sheet's media queries resolve properly — a single page scaled down would
+  render every frame at the desktop breakpoint.
 
 ### Sheet anatomy
 
