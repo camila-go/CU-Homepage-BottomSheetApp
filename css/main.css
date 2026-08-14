@@ -223,13 +223,27 @@
 /* ⚠️ `appearance: none` plus our own chevron. The live select hides the native
    arrow and overlays a 12×8 SVG at `right: 24px`, vertically centred — the
    browser default arrow is thinner, sits closer to the edge, and is the most
-   obvious tell that this isn't the real control. Padding is
-   `14px 34px 14px 24px`: the text starts 24px in and the 34px right gutter is
-   the chevron's room. */
+   obvious tell that this isn't the real control. Live paints it as an absolutely
+   positioned sibling `<svg>`; a background image at the same coordinates is
+   visually identical and saves an element.
+ *
+ * ⚠️ The labels are longer than the box. At the live 212px width the text area is
+ * only 152px, and **3 of 9 areas of study and 17 specialisations overrun it** —
+ * the worst, "MSN NP - Master of Science in Nursing, Nurse Practitioner", by
+ * 304px. Even the "Select area of study" placeholder overruns by 4px. So the
+ * overflow rule is not a detail: `text-overflow: ellipsis` with `white-space:
+ * nowrap` is what the live component uses, and without it the UA default
+ * (`clip` / `pre`) hard-truncates mid-word hard against the chevron.
+ *
+ * ⚠️ `padding-right` is 36px, not live's 34px — the one deliberate 2px deviation.
+ * The chevron spans 24px–36px in from the right edge, so a 34px gutter puts the
+ * text area's edge 2px INSIDE the chevron and the ellipsis can print over its left
+ * tip. 36px lands the text edge exactly on the chevron's left edge instead. The
+ * truncation point moves by 2px, which is invisible; the collision doesn't. */
 .hero__select {
   width: 212px;
   height: 50px;
-  padding: 14px 34px 14px 24px;
+  padding: 14px 36px 14px 24px;
   border: 1px solid var(--color-uni-black);
   border-radius: 10px;
   appearance: none;
@@ -243,6 +257,13 @@
   font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: 700;
+  /* Live: `text-overflow: ellipsis; white-space: nowrap`. `overflow: hidden` is
+     ours and belt-and-braces: the spec requires a non-visible overflow for
+     `text-overflow` to apply, but Chrome special-cases form controls and keeps
+     reporting `overflow: visible` on a <select> either way. */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .hero__select:focus-visible {

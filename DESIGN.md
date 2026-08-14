@@ -314,14 +314,38 @@ is squeezed to ~100px and its label wraps to three lines.
 | Part | Value |
 | --- | --- |
 | Label | 18px `#212322`, line-height 1.5 |
-| Select | 212 × 50 (345 at mobile), `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill, `padding: 14px 34px 14px 24px` |
+| Select | 212 × 50 (345 at mobile), `1px solid #212322`, **radius 10px**, Inter-Bold 16px, transparent fill, `padding: 14px 36px 14px 24px` |
 | Chevron | **custom 12×8 SVG**, `right: 24px`, vertically centred, `#212322` |
+| Overflow | **`text-overflow: ellipsis; white-space: nowrap`** — not optional, see below |
 
 ⚠️ The select sets `appearance: none` and overlays its own chevron —
 `<path d="M6 7.4L0 1.4L1.4 0L6 4.6L10.6 0L12 1.4L6 7.4Z">`. Leaving the browser's
 native arrow is the most obvious tell that it isn't the real control: the default
-is thinner and sits closer to the edge. The 34px right padding is the chevron's
-room.
+is thinner and sits closer to the edge. Live paints the chevron as an absolutely
+positioned sibling `<svg>`; a background image at the same coordinates renders
+identically and saves an element.
+
+⚠️ **The labels are longer than the box, so the overflow rule carries real weight.**
+At 212px the text area is only ~150px, and measured against the catalogue:
+
+- **3 of 9** areas of study overrun it — "Information Technology" (187px),
+  "Counseling & Therapy" (172px), and the **`Select area of study` placeholder
+  itself** (156px), which is the first thing every visitor sees.
+- **17 specialisations** overrun it, worst being
+  "MSN NP - Master of Science in Nursing, Nurse Practitioner" at 456px — **304px
+  over**.
+
+Live handles this with `text-overflow: ellipsis; white-space: nowrap`. Without
+them the UA defaults (`clip` / `pre`) hard-truncate mid-word flush against the
+chevron, with no ellipsis to signal that anything was cut — the text visibly
+collides with the arrow.
+
+⚠️ `padding-right` is **36px, not live's 34px** — the one deliberate deviation in
+this component. The chevron spans 24px–36px in from the right edge, so a 34px
+gutter leaves the text area's right edge 2px *inside* the chevron and the ellipsis
+can print over its left tip. 36px lands the text edge exactly on the chevron's
+left edge: clearance 0, overlap 0. The truncation point shifts by 2px, which is
+imperceptible; the collision isn't.
 
 ⚠️ At mobile the chips become an **equal-width 2×2 grid** — `column-gap: 18px`,
 `row-gap: 12px` (desktop uses a uniform 12px in a single row). The grid sizes the
