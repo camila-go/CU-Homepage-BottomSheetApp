@@ -181,6 +181,12 @@
   gap: 30px;
   /* Live gap from the chips' bottom to the label's top is 32.5px. */
   margin-top: 32.5px;
+  /* ⚠️ The row is WIDER than the copy column and overflows it on purpose: live's
+     form wrapper is 750px against a 645px column, with the CTA ending at x=912
+     while the column ends at 795. Without `max-content` the 585px column squeezes
+     the CTA to ~100px and its label wraps to three lines (102px tall). */
+  width: max-content;
+  max-width: none;
 }
 
 /* ⚠️ Live has 120px between the selects' bottom edge and the bottom of the hero
@@ -242,6 +248,65 @@
 .hero__select:focus-visible {
   outline: 2px solid var(--color-uni-black);
   outline-offset: 2px;
+}
+
+/* Step 3 CTA. Same button family as the hero chips — `padding: 6.5px 15px`,
+   `border: 4px solid transparent`, `radius 7.5px`, Inter-Bold 18px, the standard
+   drop shadow — so it inherits the same hover/active reds via .chip-red's rules
+   being mirrored here. Content-width and inline as the row's third item at
+   desktop; full-width below the selects at mobile. */
+.hero__cta {
+  /* Never let the label wrap — it is what made the button 102px tall. */
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 4px, not 15: live wraps the 23px arrow in a 45x27 slot, so most of the
+     visual breathing room comes from the slot, not the gap. Reproducing the slot
+     is what makes the button 264px wide rather than 252. */
+  gap: 4px;
+  min-height: 48px;
+  padding: 6.5px 15px;
+  border: 4px solid transparent;
+  border-radius: 7.5px;
+  background: var(--color-uni-red);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: var(--shadow-btn);
+  transition: background var(--duration-fast) ease;
+}
+
+.hero__cta[hidden] {
+  display: none;
+}
+
+/* The arrow ships as a #262625 SVG; live inverts it to white on the red fill. */
+.hero__cta-icon {
+  /* 45x27 slot holding the 23px arrow, matching live's icon span. */
+  width: 45px;
+  height: 27px;
+  object-fit: contain;
+  filter: var(--filter-icon-white);
+}
+
+.hero__cta:hover {
+  background: var(--color-red-hover);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+.hero__cta:active {
+  background: var(--color-red-hover);
+  box-shadow: var(--shadow-btn-active);
+}
+
+.hero__cta:focus-visible {
+  outline: 4px solid var(--focus-ring-red);
+  outline-offset: 0;
 }
 
 /* Mobile-only: the desktop artwork is the background image above. */
@@ -748,11 +813,19 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* The two hero selects can't sit side by side in 375px. */
+  /* The two hero selects can't sit side by side in 375px. Live stacks them with
+     22.5px between fields, and the CTA sits 22.5px below the last select. */
   .hero__finder {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 22.5px;
+    /* Undo the desktop `max-content`: stacked fields fill the column. */
+    width: auto;
+  }
+
+  /* Full-width at mobile, as on the live site. */
+  .hero__cta {
+    width: 100%;
   }
 
   .hero__select {

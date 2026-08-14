@@ -292,10 +292,24 @@ hero grows 562 → 677 at desktop.
    appear.
 2. **Choose an area** → a second "Select specialization" `<select>` appears,
    populated with that degree + area's programmes.
-3. **Choose a programme** → the live site navigates.
+3. **Choose a specialization** → an **"Explore my program" CTA appears.**
 
-**There is no submit button.** After step 2 the only visible controls are the
-four chips and the two selects.
+⚠️ **There IS a submit CTA.** I originally checked for one after step 2, found
+none, and wrote "there is no submit button" into this file as fact — it only
+appears once a specialization is picked. Changing the degree or the area hides it
+again, since the choice it would act on no longer exists.
+
+| CTA | Value |
+| --- | --- |
+| Button | `#c10016` fill, white, `radius 7.5px`, `padding 6.5px 15px`, `border: 4px solid transparent`, Inter-Bold 18px, shadow `0 5px 20px rgba(0,0,0,.1)`, 48px tall |
+| Icon | `double-arrow.svg` (23px) in a **45×27 slot**, `gap: 4px`, inverted white |
+| Desktop | content-width (**264px**), inline as the row's third item, 30px gap, bottom-aligned with the selects |
+| Mobile | full width (345), stacked 22.5px below the last select |
+
+⚠️ At desktop the finder row is **wider than the copy column and overflows it on
+purpose** — live's form wrapper is 750px against a 645px column, with the CTA
+ending at x=912 while the column ends at 795. Constrained to the column, the CTA
+is squeezed to ~100px and its label wraps to three lines.
 
 | Part | Value |
 | --- | --- |
